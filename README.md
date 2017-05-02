@@ -4,10 +4,10 @@
 
 ## Team
 
-  - teamMember
-  - teamMember
-  - teamMember
-  - teamMember
+  - Jack
+  - Kriz
+  - Drew
+  - Alex
 
 ## Table of Contents
 
