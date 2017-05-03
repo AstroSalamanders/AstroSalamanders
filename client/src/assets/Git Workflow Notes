@@ -1,0 +1,40 @@
+Start with 
+
+git checkout master
+git pull --rebase upstream master
+
+gcm
+gpu
+
+Create Branch
+
+git checkout -b feature-branch (gcb*)
+
+git co -b (gco*)
+
+Before pushing, pull upstream to handle merge conflicts
+
+git pull --rebase upstream master (gpu)
+To push
+
+git push origin feature-branch
+
+git po
+
+Then pull request using Github
+
+If fail, work on it again and push again, will automatically update
+
+If PR successful hit Delete Branch button
+
+On terminal change branch back to master, and delete feature branch
+
+git checkout master (gcm)
+git branch -d feature-branch (gd*)
+git pull --rebase upstream master (gpu)
+
+
+
+
+Master branch should always be copy of org's master branch
+Make edits and commit frequently!
