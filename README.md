@@ -3,7 +3,7 @@
 > Pithy project description
 
 ## Team
-
+ 
   - Jack
   - Kriz
   - Drew
