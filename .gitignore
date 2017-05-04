@@ -25,6 +25,10 @@ build/
 # Deployed apps should consider commenting these lines out:
 # see https://npmjs.org/doc/faq.html#Should-I-check-my-node_modules-folder-into-git
 
+# Mac Finder generated files
+.DS_Store
+
+ 
 node_modules/
 bower_components/
 database-mongo/data/db/
