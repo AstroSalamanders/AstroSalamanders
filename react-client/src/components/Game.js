@@ -22,6 +22,8 @@ class Game extends React.Component {
                   minHeight: height
                 });
 
+    console.log("Game w: %s h: %s", width, height )
+
   }
 
 
