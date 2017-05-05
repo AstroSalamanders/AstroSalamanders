@@ -2,16 +2,19 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
 
+import Game from './components/Game.js';
+
 class App extends React.Component {
+
   constructor(props) {
     super(props);
-    this.state = {};
+    // this.state = {};
   }
 
   render() {
     return (
     <div>
-      Bomber Man!
+      <Game />
     </div>)
   }
 }
