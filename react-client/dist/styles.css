@@ -14,19 +14,25 @@ body{
   min-height: 100%;
   height: 100%;
 
-  background: url('./assets/grassTile.jpg');
+  background: url('./assets/dirtTile.jpg');
+  background-size: 64px;
   
 }
 
 /*  */
 #Board {
   
-  width: 320px;
-  height: 568px;
-  min-width: 320px;
-  min-height: 568px;
-  max-width: 320px;
-  max-height: 568px;
+  width: 288px;
+  height: 480px;
+  min-width: 288px;
+  min-height: 480px;
+  max-width: 288px;
+  max-height: 480px;
+
+  box-shadow: 2px 2px 8px rgba(0,0,0,.3);
+
+  background: url('./assets/grassTile.jpg');
+  background-size: 32px;
 
   background-color: white;
   position: absolute;
@@ -54,5 +60,15 @@ body{
 
 /* */
 .player {
-  
+    width: 32px;
+    height: 32px;
+    /*border: 1px solid;*/
+    background: url(./assets/Bomberman/Front/Bman_F_f00.png);
+    background-size: 20px 42px;
+    background-repeat: no-repeat;
+    background-position-y: -11px;
+    background-position-x: 4px;
+    position: absolute;
+    top: 32px;
+    left: 32px;
 }

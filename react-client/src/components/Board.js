@@ -1,5 +1,6 @@
 /* Board component ( under players, blocks, boxes ) bottom layer ( sibling on rendering container ) */
 import React from 'react';
+import Player from './Player.js'
 
 class Board extends React.Component {
 
@@ -17,10 +18,11 @@ class Board extends React.Component {
     let boardHeight = 568;
     let boardWidth = 320;
 
-    let topmargin = ((height - boardHeight) / 2);
+    let topMargin = ((height - boardHeight) / 2);
     let leftMargin = ((width - boardWidth) / 2);
 
-    $(Board).css({ top: topmargin, left: leftMargin });
+    $(Board).css({ top: topMargin, left: leftMargin });
+    console.log("Board Margins left: %s top: %s", leftMargin, topMargin )
 
   }
 
@@ -28,7 +30,7 @@ class Board extends React.Component {
     return (
 
         <div id="Board">
-          BOARD
+          <Player/>
         </div>
     );
   }
