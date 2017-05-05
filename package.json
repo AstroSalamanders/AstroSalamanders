@@ -38,7 +38,7 @@
     "webpack": "^2.1.0-beta.22",
     "eslint-config-hackreactor": "git://github.com/reactorcore/eslint-config-hackreactor"
   },
-  
+
   "babel": {
     "presets": [
       "es2015"

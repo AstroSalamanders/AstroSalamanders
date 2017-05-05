@@ -2,7 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
 
+import Game from './components/Game.js';
+
 class App extends React.Component {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -133,11 +136,13 @@ class App extends React.Component {
     this.setState({
       test: 'HELL YEAH I GET IT!!!'
     })
+
   }
 
   render() {
     return (
     <div>
+
       <button onClick={this.newGame1OnClick}> New Game room 1</button>
       <button onClick={this.newGame2OnClick}> New Game room 2</button>
       <br></br>
@@ -153,6 +158,9 @@ class App extends React.Component {
         <p>{JSON.stringify(this.state.clientID)}</p>
         <p>{this.state.room.toString()}</p>
       </div>
+
+      <Game />
+
     </div>)
   }
 }
