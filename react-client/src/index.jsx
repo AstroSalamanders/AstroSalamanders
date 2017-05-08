@@ -12,7 +12,21 @@ class App extends React.Component {
       test: '',
       socket: () => {},
       clientID: '',
-      room: ''
+      room: '',
+
+      /* 
+         the state of the app should live in the outmost component
+         and be passed down through props.
+
+         Everything that updates such as the 
+         player + it's coords
+         and boxes + their status + their coords should be here
+
+         Since the blocks won't change, they could be a state of the board component itself
+      */
+
+      player: { x: 32, y: 32 },
+      boxes: [ { open: false, pos: { x: 64, y: 160 }} ]
     };
 
     this.newGame1OnClick = this.newGame1OnClick.bind(this);
@@ -143,6 +157,8 @@ class App extends React.Component {
     return (
     <div>
 
+    {/* This code is Jack's Game Room Test
+
       <button onClick={this.newGame1OnClick}> New Game room 1</button>
       <button onClick={this.newGame2OnClick}> New Game room 2</button>
       <br></br>
@@ -154,12 +170,16 @@ class App extends React.Component {
       <div id='test'>
         {this.state.test}
       </div>
+
       <div>
         <p>{JSON.stringify(this.state.clientID)}</p>
         <p>{this.state.room.toString()}</p>
-      </div>
+      </div> 
 
-      <Game />
+    */}
+
+      <Game player={ this.state.player } 
+            boxes={ this.state.boxes } />
 
     </div>)
   }

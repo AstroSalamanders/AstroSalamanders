@@ -7,7 +7,6 @@ class Game extends React.Component {
 
   constructor(props){
     super(props);
-
   }
 
   componentDidMount(){
@@ -30,7 +29,10 @@ class Game extends React.Component {
   render(){
     return( 
         <div id="Game">
-          <Board />
+
+          <Board player={ this.props.player }
+                 boxes={ this.props.boxes } />
+                 
         </div>
 
     );
