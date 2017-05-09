@@ -55,6 +55,7 @@ body{
 
 /* brake */
 .box {
+  /*border: 1px solid red;*/
   width: 32px;
   height: 32px;
   min-width: 32px;
@@ -73,19 +74,16 @@ body{
     z-index: 100;
     transition: top .1s, left .1s;
     transition-timing-function: linear;
-    width: 32px;
-    height: 32px;
-    /*border: 1px solid;*/
+    width: 17px;
+    height: 29px;
+    border: 1px solid black;
     background: url(./assets/Bomberman/Front/Bman_F_f00.png);
-    background-size: 20px 42px;
+    background-size: 19px 39px;
     background-repeat: no-repeat;
     background-position-y: -11px;
-    background-position-x: 4px;
+    background-position-x: -2px;
     position: absolute;
-    /*top: 32px;
-    left: 32px;*/
 }
-
 .bomb {
   width: 16px;
   height: 16px;

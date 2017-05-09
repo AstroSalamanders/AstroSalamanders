@@ -10,7 +10,7 @@ class Box extends React.Component{
 
   constructor(props){
     super(props);
-    console.log("Box props",props)
+    // console.log("Box props",props)
   }
 
 
