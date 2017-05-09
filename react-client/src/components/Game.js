@@ -21,7 +21,7 @@ class Game extends React.Component {
                   minHeight: height
                 });
 
-    console.log("Game w: %s h: %s", width, height )
+    // console.log("Game w: %s h: %s", width, height )
 
   }
 
@@ -31,7 +31,8 @@ class Game extends React.Component {
         <div id="Game">
 
           <Board player={ this.props.player }
-                 boxes={ this.props.boxes } />
+                 boxes={ this.props.boxes }
+                 blocks={ this.props.blocks } />
 
         </div>
 

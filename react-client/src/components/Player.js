@@ -17,7 +17,7 @@ class Player extends React.Component{
 
   render(){
 
-    console.log( "Rendering player: ",this.props );
+    // console.log( "Rendering player: ",this.props );
 
     return( 
 
