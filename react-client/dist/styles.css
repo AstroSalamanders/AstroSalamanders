@@ -85,3 +85,10 @@ body{
     /*top: 32px;
     left: 32px;*/
 }
+
+.bomb {
+  width: 16px;
+  height: 16px;
+  background: url(./assets/Bomb/Bomb_f01.png);
+  background-size: 16px 16px;
+}
