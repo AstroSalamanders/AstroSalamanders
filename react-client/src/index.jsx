@@ -30,6 +30,8 @@ class App extends React.Component {
       boxes: [ { open: false, pos: { x: 64, y: 160 }} ]
     };
 
+    this.move = this.move.bind(this);
+
     this.newGame1OnClick = this.newGame1OnClick.bind(this);
     this.newGame2OnClick = this.newGame2OnClick.bind(this);
     this.joinGame1OnClick = this.joinGame1OnClick.bind(this);
@@ -38,8 +40,8 @@ class App extends React.Component {
   }
 
   onComponentDidMount(){
-      // listeners?
 
+    // function to randomly place x amount of boxes
   }
 
   newGame1OnClick () {
@@ -155,15 +157,67 @@ class App extends React.Component {
     this.setState({
       test: 'HELL YEAH I GET IT!!!'
     })
-
   }
 
-  move(e){
-    console.log( "MOVING ", Object.keys(e) );
+
+
+  move(dir){
+
+    /* Board size width: 288px; height: 480px; */
+
+    let step = 9;
+    let playerWidth = 32;
+
+    if ( dir === 'up' ){
+
+      // if it'll not leave the canvas
+      if ( this.state.player.y - step >= 0 ){
+        // check for collision aswell
+        this.setState({ player: { x: this.state.player.x, y: this.state.player.y - step } });
+      }
+
+    }
+
+    if ( dir === 'down' ){
+        
+      // if it'll not leave the canvas
+      if ( this.state.player.y + step <= (480 - playerWidth) ){
+        // check for collision aswell
+        this.setState({ player: { x: this.state.player.x, y: this.state.player.y + step } });
+      }
+
+    }
+
+    if ( dir === 'right' ){
+      
+      // if it'll not leave the canvas
+      if ( this.state.player.x + step <= (288 - playerWidth) ){
+        // check for collision aswell
+        this.setState({ player: { x: this.state.player.x + step, y: this.state.player.y } });
+      }
+
+    }
+
+    if ( dir === 'left' ){
+      
+      // if it'll not leave the canvas
+      if ( this.state.player.x - step >= 0 ){
+        // check for collision aswell
+        this.setState({ player: { x: this.state.player.x - step, y: this.state.player.y } });
+      }
+
+    }
+
+    if ( dir === 'spacebar' ){
+      alert("BOOM!");
+    }
+    // this.state.player
   }
 
 
   render() {
+
+    console.log("Rendering APP")
     return (
 
 
@@ -171,28 +225,23 @@ class App extends React.Component {
 
       <KeyHandler keyEventName='keydown'  
                   keyValue="ArrowUp"
-                  onKeyHandle={ (e) => 
-                    console.log( "MOVING Up", e) } />
+                  onKeyHandle={ (e) => this.move("up") } />
 
       <KeyHandler keyEventName='keydown'  
                   keyValue="ArrowDown"
-                  onKeyHandle={ (e) => 
-                    console.log( "MOVING Down", e ) } />
+                  onKeyHandle={ (e) => this.move('down') } />
 
       <KeyHandler keyEventName='keydown'  
                   keyValue="ArrowLeft"
-                  onKeyHandle={ (e) => 
-                    console.log( "MOVING Left", e ) } />
+                  onKeyHandle={ (e) => this.move('left') } />
 
       <KeyHandler keyEventName='keydown'  
                   keyValue="ArrowRight"
-                  onKeyHandle={ (e) => 
-                    console.log( "MOVING Right", e ) } />
+                  onKeyHandle={ (e) => this.move('right') } />
 
       <KeyHandler keyEventName='keyup' 
                   keyValue=" "
-                  onKeyHandle={ (e) => 
-                    console.log( "DROP THE BOOM ", e ) } />
+                  onKeyHandle={ (e) => this.move('spacebar') } />
 
     {/* This code is Jack's Game Room Test
 

@@ -10,9 +10,9 @@ class Game extends React.Component {
   }
 
   componentDidMount(){
+
     let height = $(document).height();
     let width = $(document).width();
-
     let Game = $('#Game');
 
     $(Game).css({ width: width,
@@ -32,7 +32,7 @@ class Game extends React.Component {
 
           <Board player={ this.props.player }
                  boxes={ this.props.boxes } />
-                 
+
         </div>
 
     );

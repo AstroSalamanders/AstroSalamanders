@@ -14,10 +14,16 @@ class Player extends React.Component{
 
 
 
+
   render(){
+
+    console.log( "Rendering player: ",this.props );
+
     return( 
 
-        <div className="player">
+        <div className="player"
+             style={{ left: this.props.pos.x,
+                       top: this.props.pos.y }} >
         </div>
 
     );
