@@ -8,13 +8,11 @@
   "engines": {
     "node": ">=6.4.0"
   },
-
   "scripts": {
     "react-dev": "webpack -d --watch",
     "server-dev": "nodemon server/index.js",
     "db-start": "mongod --dbpath ./database-mongo/data/db"
   },
-
   "dependencies": {
     "babel-loader": "^7.0.0",
     "bluebird": "^3.5.0",
@@ -26,9 +24,9 @@
     "node-uuid": "^1.4.8",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
+    "react-key-handler": "^0.3.0",
     "socket.io": "^1.7.3"
   },
-
   "devDependencies": {
     "babel-core": "^6.23.1",
     "babel-cli": "^6.7.5",
@@ -38,7 +36,6 @@
     "webpack": "^2.1.0-beta.22",
     "eslint-config-hackreactor": "git://github.com/reactorcore/eslint-config-hackreactor"
   },
-
   "babel": {
     "presets": [
       "es2015"

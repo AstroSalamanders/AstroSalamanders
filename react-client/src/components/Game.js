@@ -7,13 +7,12 @@ class Game extends React.Component {
 
   constructor(props){
     super(props);
-
   }
 
   componentDidMount(){
+
     let height = $(document).height();
     let width = $(document).width();
-
     let Game = $('#Game');
 
     $(Game).css({ width: width,
@@ -30,7 +29,10 @@ class Game extends React.Component {
   render(){
     return( 
         <div id="Game">
-          <Board />
+
+          <Board player={ this.props.player }
+                 boxes={ this.props.boxes } />
+
         </div>
 
     );
