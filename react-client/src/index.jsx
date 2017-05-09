@@ -410,7 +410,7 @@ class App extends React.Component {
       <KeyHandler keyEventName='keydown'  
                   keyValue="ArrowDown"
                   onKeyHandle={ (e) => this.move('down') } />
-
+                  
       <KeyHandler keyEventName='keydown'  
                   keyValue="ArrowLeft"
                   onKeyHandle={ (e) => this.move('left') } />
