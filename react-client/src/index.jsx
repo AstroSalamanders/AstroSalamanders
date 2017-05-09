@@ -106,6 +106,8 @@ class App extends React.Component {
 
     this.move = this.move.bind(this);
     this.canMove = this.canMove.bind(this);
+    this.destroyBlock = this.destroyBlock.bind(this);
+    this.destroyPlayer = this.destroyPlayer.bind(this);
 
 
     this.newGame1OnClick = this.newGame1OnClick.bind(this);
@@ -116,8 +118,41 @@ class App extends React.Component {
   }
 
   onComponentDidMount(){
-
     // function to randomly place x amount of boxes
+  }
+
+  destroyBlock(loc){
+    loc = { x: 64, y: 160 }
+    //takes in a location element; estimates the closest and removes box at that location
+    var customFloor = function(coord){
+      return Math.floor(coord / 32) * 32;
+    }
+    loc.x = customFloor(loc.x)
+    loc.y = customFloor(loc.y)
+
+    var newBoxesArray =  this.state.boxes.filter((box)=>{
+      console.log(box, loc, box.x, loc.x, box.y, loc.y)
+      if(box.pos.x === loc.x && box.pos.y === loc.y){
+        return false;
+      } else {
+        return true;
+      }
+    })
+    console.log(newBoxesArray)
+    this.setState({boxes: newBoxesArray})
+    this.destroyPlayer(loc)
+  }
+
+  destroyPlayer(loc){
+    var playerRect = {x: this.state.player.x, y: this.state.player.y, width: 17, height: 29}
+    var destructRect = {x: loc.x, y:loc.y, width: 32, height: 32}
+
+    if(playerRect.x < destructRect.x + destructRect.width &&
+      playerRect.x + playerRect.width > destructRect.x &&
+      playerRect.y < destructRect.y + destructRect.height &&
+      playerRect.y + playerRect.height > destructRect.y){
+      alert('Player Dead!')
+    }
   }
 
   newGame1OnClick () {
@@ -404,6 +439,7 @@ class App extends React.Component {
   }
 
 
+
   render() {
 
     console.log("Rendering APP")
@@ -411,7 +447,8 @@ class App extends React.Component {
 
 
     <div>
-
+      <button onClick={this.destroyBlock}> DestroyBlock</button>
+      <button onClick={this.destroyPlayer}> DestroyPlayer</button>
       <KeyHandler keyEventName='keydown'  
                   keyValue="ArrowUp"
                   onKeyHandle={ (e) => this.move("up") } />
