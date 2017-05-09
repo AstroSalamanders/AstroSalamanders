@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
+import KeyHandler, {KEYDOWN, KEYUP} from 'react-key-handler';
 
 import Game from './components/Game.js';
 
@@ -36,6 +37,11 @@ class App extends React.Component {
     this.test = this.test.bind(this);
   }
 
+  onComponentDidMount(){
+      // listeners?
+
+  }
+
   newGame1OnClick () {
     var socket = io.connect('/');
     socket.on('onconnected', (data) => {
@@ -60,7 +66,6 @@ class App extends React.Component {
         })
       }
     });
-
   }
 
   newGame2OnClick () {
@@ -153,9 +158,41 @@ class App extends React.Component {
 
   }
 
+  move(e){
+    console.log( "MOVING ", Object.keys(e) );
+  }
+
+
   render() {
     return (
+
+
     <div>
+
+      <KeyHandler keyEventName='keydown'  
+                  keyValue="ArrowUp"
+                  onKeyHandle={ (e) => 
+                    console.log( "MOVING Up", e) } />
+
+      <KeyHandler keyEventName='keydown'  
+                  keyValue="ArrowDown"
+                  onKeyHandle={ (e) => 
+                    console.log( "MOVING Down", e ) } />
+
+      <KeyHandler keyEventName='keydown'  
+                  keyValue="ArrowLeft"
+                  onKeyHandle={ (e) => 
+                    console.log( "MOVING Left", e ) } />
+
+      <KeyHandler keyEventName='keydown'  
+                  keyValue="ArrowRight"
+                  onKeyHandle={ (e) => 
+                    console.log( "MOVING Right", e ) } />
+
+      <KeyHandler keyEventName='keyup' 
+                  keyValue=" "
+                  onKeyHandle={ (e) => 
+                    console.log( "DROP THE BOOM ", e ) } />
 
     {/* This code is Jack's Game Room Test
 
