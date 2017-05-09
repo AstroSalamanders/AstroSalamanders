@@ -32,4 +32,3 @@ build/
 node_modules/
 bower_components/
 database-mongo/data/db/
-react-client/dist/bundle.js
