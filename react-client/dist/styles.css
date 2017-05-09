@@ -48,6 +48,8 @@ body{
   max-height: 32px;
   
   position: absolute;
+  background: url(./assets/block2.jpg);
+  background-size: 32px 32px;
   background-color: black;
 }
 
@@ -61,6 +63,8 @@ body{
   max-height: 32px;
 
   position: absolute;
+  background: url(./assets/box.jpg);
+  background-size: 32px 32px;
   background-color: orange;
 }
 
