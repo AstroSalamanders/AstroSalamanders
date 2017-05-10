@@ -84,9 +84,12 @@ body{
     position: absolute;
 }
 .bomb {
-  width: 25px;
-  height: 25px;
-  background: url(./assets/Bomb/Bomb_f01.png);
-  background-size: 25px 25px;
-  position: absolute;
+    width: 32px;
+    height: 32px;
+    background: url(./assets/Bomb/Bomb_f01.png);
+    background-size: 25px 25px;
+    position: absolute;
+    border: 1px solid red;
+    background-repeat: no-repeat;
+    background-position: 2px 2px;
 }
