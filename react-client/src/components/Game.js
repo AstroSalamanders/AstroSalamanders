@@ -25,7 +25,6 @@ class Game extends React.Component {
 
   }
 
-
   render(){
     return( 
         <div id="Game">
@@ -35,7 +34,6 @@ class Game extends React.Component {
                  blocks={ this.props.blocks } 
                  bombs={ this.props.bombs }
                  flames={ this.props.flames }/>
-
         </div>
 
     );

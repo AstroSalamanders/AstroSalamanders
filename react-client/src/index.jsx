@@ -391,19 +391,33 @@ class App extends React.Component {
       }
 
       else if ( dir === 'spacebar' ){
-        console.log('Boom!!!');
-        
+        //function to center bombs
         let customFloor = (coord) => {
           return Math.floor(coord/32) * 32;
         }
        
+        //create new bombs/update bomb state
         let newBomb = { x: customFloor(this.state.player.x), y: customFloor(this.state.player.y) };
         let currentBombs = this.state.bombs;
         currentBombs.push(newBomb);
 
         this.setState({ bombs: currentBombs });
+        
+        //when bomb explodes, set flames state
+        setTimeout( ()=> {
+          console.log('BOOM!!!');
+          let flameTop = {x: newBomb.x, y: newBomb.y + 32}; 
+          let flameLeft = {x: newBomb.x - 32, y: newBomb.y};
+          let flameMid = {x: newBomb.x, y: newBomb.y};
+          let flameRight = {x: newBomb.x + 32, y: newBomb.y};
+          let flameBottom = {x: newBomb.x, y: newBomb.y - 32};
 
-        console.log('Flames state', this.state.flames)
+          this.setState({ bombs: currentBombs.splice(1) });
+          this.setState({ flames: [flameTop, flameLeft, flameMid, flameRight, flameBottom] })
+          console.log('Flames state', this.state.flames);
+
+        }, 3000)
+
       }
 
   }

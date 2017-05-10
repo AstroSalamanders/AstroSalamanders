@@ -4,7 +4,6 @@ class Flame extends React.Component{
 
   constructor(props){
     super(props);
-    console.log('Flame position', props.pos)
   }
 
   render(){
