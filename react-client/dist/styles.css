@@ -93,3 +93,13 @@ body{
     background-repeat: no-repeat;
     background-position: 2px 2px;
 }
+
+.fire {
+    width: 32px;
+    height: 32px;
+    background: url(./assets/Flame/Flame_f00.png);
+    background-size: 25px 25px;
+    position: absolute;
+    background-repeat: no-repeat;
+    background-position: 2px 2px;
+}

@@ -38,6 +38,9 @@ class Board extends React.Component {
 
           <Player pos={ this.props.player } />
 
+          { this.props.flames.map( (flame,x) =>
+            <Flame key = {x} pos={{x: flame.x, y: flame.y}}  /> ) }
+
           { this.props.bombs.map( (bomb,x) =>
             <Bomb key = {x} pos={{x: bomb.x, y: bomb.y}}  /> ) }
           

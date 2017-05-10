@@ -28,6 +28,7 @@ class App extends React.Component {
       player: { x: 33, y: 33 },
       boxes: [ { open: false, pos: { x: 64, y: 160 }} ],
       bombs: [],
+      flames: [],
       blocks: [  
                 // top edge
                 { x: 0, y: 0 },
@@ -283,17 +284,17 @@ class App extends React.Component {
             (player.y < (block.y + boxsize)) 
           ){
 
-        console.log("BOX COLLISION");
+        console.log("BLOCK COLLISION");
 
         let result;
         // use dir to return how the max we can move in that direction
         if ( dir === 'up' ){ 
-          console.log( player.y +" - ("+ block.y +" + "+ boxsize +") - "+ this.state.player.y);
+          // console.log( player.y +" - ("+ block.y +" + "+ boxsize +") - "+ this.state.player.y);
           return (this.state.player.y - (block.y + boxsize)); 
         }
 
         else if ( dir === 'down' ){ 
-          console.log( (player.y + playerHeight)+" - "+ block.y);
+          // console.log( (player.y + playerHeight)+" - "+ block.y);
           return block.y - (this.state.player.y + playerHeight); 
         }
 
@@ -391,22 +392,25 @@ class App extends React.Component {
 
       else if ( dir === 'spacebar' ){
         console.log('Boom!!!');
+        
+        let customFloor = (coord) => {
+          return Math.floor(coord/32) * 32;
+        }
        
-        let newBomb = { x: this.state.player.x, y: this.state.player.y };
+        let newBomb = { x: customFloor(this.state.player.x), y: customFloor(this.state.player.y) };
         let currentBombs = this.state.bombs;
         currentBombs.push(newBomb);
 
         this.setState({ bombs: currentBombs });
 
-        console.log(this.state.bombs)
+        console.log('Flames state', this.state.flames)
       }
 
   }
 
-
   render() {
 
-    console.log("Rendering APP")
+    // console.log("Rendering APP")
     return (
 
 
@@ -456,7 +460,8 @@ class App extends React.Component {
       <Game player={ this.state.player } 
             boxes={ this.state.boxes }
             blocks={ this.state.blocks } 
-            bombs={ this.state.bombs }/>
+            bombs={ this.state.bombs }
+            flames={ this.state.flames }/>
 
     </div>)
   }
