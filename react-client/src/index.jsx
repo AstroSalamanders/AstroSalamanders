@@ -13,7 +13,7 @@ class App extends React.Component {
       socket: () => {},
       clientID: '',
       room: '',
-      hide: 'block',
+
       /* 
          the state of the app should live in the outmost component
          and be passed down through props.
