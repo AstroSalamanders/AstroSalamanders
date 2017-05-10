@@ -15,9 +15,9 @@ app.use(bodyParser.urlencoded({extended: true}));
 /*
   put express ajax route here
 */
-
-server.listen(3000, function() {
-  console.log('listening on port 3000!');
+var _port = process.env.PORT || 3000
+server.listen( _port, function() {
+  console.log('listening on port' + _port);
 });
 
 
