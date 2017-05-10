@@ -4,6 +4,7 @@ var Promise = require('bluebird');
 var io = require('socket.io');
 var UUID = require('node-uuid');
 var http = require('http');
+var DLL = require('./DoubleLinkedList.js');
 
 var app = express();
 var server = http.createServer(app);
@@ -20,10 +21,6 @@ server.listen( _port, function() {
   console.log('listening on port' + _port);
 });
 
-
-
-
-
 /* Socket.IO server set up. */
 
 //Express and socket.io can work together to serve the socket.io client files for you.
@@ -36,6 +33,10 @@ sio.use(function(socket, next) {
   var handshake = socket.request;
   next();
 })
+
+var roomList = new DLL();
+var roomNumCounter = 0;
+var clientID_room_table = {}; // clientID : room node
 
 //Socket.io will call this function when a client connects, 
 //So we can send that client a unique ID we use so we can 
@@ -55,35 +56,90 @@ sio.sockets.on('connection', (client) => {
   //When this client disconnects
   client.on('disconnect', () => {
     //Useful to know when someone disconnects
-    console.log('\t socket.io:: client disconnected ' + client.userid );
+    console.log('\t socket.io:: client disconnected ' + clientID_room_table[client.userid].val );
+    
+
+    //here we handle the room arrangement after player left
+    if (client.adapter.rooms) {
+      //clientID_room_table[client.userid] => roomList node => val => room name
+      //if after disconnect, there's no such room
+      if (!client.adapter.rooms[clientID_room_table[client.userid].val]) {
+        console.log('delete node: ', clientID_room_table[client.userid].val);
+        if (roomList.tail === clientID_room_table[client.userid]) {
+          roomList.pop();
+        }
+        else if (roomList.head === clientID_room_table[client.userid]) {
+          roomList.shift();
+        }
+        else {
+          clientID_room_table[client.userid].delete();
+        }
+      }
+      else {
+        console.log('move ' + clientID_room_table[client.userid].val + 'to tail');
+        roomList.moveToEnd(clientID_room_table[client.userid]);
+      }
+    }
+
   }); //client.on disconnect
   
 
 
-  client.on('create', (room) => {
-    client.join(room);
-    client.emit('room info', {
-      clientID: client.rooms,
-      adapter: client.adapter.rooms
-    });
-  });
+  client.on('join', () => {
+    var room;
+    //when the room list is empty
+    //create a new room called room1 to the list
+    if (roomList.head === null || roomList.tail === null || 
+      client.adapter.rooms === undefined || client.adapter.rooms[roomList.tail.val] === undefined) {
 
-  client.on('join', (room) => {
+      console.log('no room list, or no client.adapter room records');
+      roomNumCounter++; // 0 => 1
+      room = 'room' + roomNumCounter; //room + 1 = room1
+      roomList.push(room);
+    }
+    //when there are less than 2, but not 0 clientID in the last room
+    //it is a available room to join
+    else if (client.adapter.rooms[roomList.tail.val].length < 2) {
+      console.log(roomList.tail.val + ' players < 2');
+      room = roomList.tail.val;
+    }
+    //when there are 2 clientID in the last room
+    //increment the room#, and use that to create a new room name to the list
+    else {
+      roomNumCounter++;
+      room = 'room' + roomNumCounter;
+      console.log(roomList.tail.val + ' full, swith to next: ' + room);
+      roomList.push(room);
+    }
+    //store the key-value pair of client and room node
+    clientID_room_table[client.userid] = roomList.tail;
     client.join(room);
+    //if after join, current room is full, move this room node to the front of list
+    //so that other waiting room will become the next tail, instead of creating a new room
+    if (client.adapter.rooms[roomList.tail.val].length === 2) {
+      roomList.moveToFront(roomList.tail);
+    }
     client.emit('room info', {
-      clientID: client.rooms,
+      clientID: Object.keys(client.rooms)[0],
+      room: room,
       adapter: client.adapter.rooms
     });
   })
+  
 
   client.on('send test', ({test, room}) => {
     console.log('send test');
-    client.broadcast.emit('get test', {
-      test: test,
-      room: room
+    client.in(room).broadcast.emit('get test', {
+      test: test + 'from ' + room
     });
   })
 }); //sio.sockets.on connection
+
+
+
+
+
+
 
 
 

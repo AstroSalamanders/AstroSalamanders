@@ -13,7 +13,7 @@ class App extends React.Component {
       socket: () => {},
       clientID: '',
       room: '',
-
+      hide: 'block',
       /* 
          the state of the app should live in the outmost component
          and be passed down through props.
@@ -107,11 +107,7 @@ class App extends React.Component {
     this.move = this.move.bind(this);
     this.canMove = this.canMove.bind(this);
 
-
-    this.newGame1OnClick = this.newGame1OnClick.bind(this);
-    this.newGame2OnClick = this.newGame2OnClick.bind(this);
-    this.joinGame1OnClick = this.joinGame1OnClick.bind(this);
-    this.joinGame2OnClick = this.joinGame2OnClick.bind(this);
+    this.joinGameOnClick = this.joinGameOnClick.bind(this);
     this.test = this.test.bind(this);
   }
 
@@ -120,118 +116,39 @@ class App extends React.Component {
     // function to randomly place x amount of boxes
   }
 
-  newGame1OnClick () {
+  joinGameOnClick () {
     var socket = io.connect('/');
     socket.on('onconnected', (data) => {
       console.log('connected successfuly to the socket.io server. My server side ID is ', data.id);
-      socket.emit('create', 'room1');
+      socket.emit('join');
     });
 
-    socket.on('room info', ({clientID, adapter}) => {
-      console.log("clientID: ",clientID); //client id
-      console.log("adapter: ",adapter); //data.adapter.room1 || data.adapter.room2
+    socket.on('room info', ({clientID, room, adapter}) => {
+      console.log("clientID: ", clientID);
+      console.log("room: ", room); 
+      console.log("adapter: ", adapter); 
       this.setState({
         socket: socket,
-        room: 'room1',
-        clientID: clientID
+        clientID: clientID,
+        room: room
       })
     });
 
-    socket.on('get test', ({test, room}) => {
-      if (room === this.state.room){
-        this.setState({
-          test: test
-        })
-      }
-    });
-  }
-
-  newGame2OnClick () {
-    var socket = io.connect('/');
-    socket.on('onconnected', (data) => {
-      console.log('connected successfuly to the socket.io server. My server side ID is ', data.id);
-      socket.emit('create', 'room2');
-    });
-
-    socket.on('room info', ({clientID, adapter}) => {
-      console.log("clientID: ",clientID); //client id
-      console.log("adapter: ",adapter); //data.adapter.room1 || data.adapter.room2
+    socket.on('get test', ({test}) => {
       this.setState({
-        socket: socket,
-        room: 'room2',
-        clientID: clientID
+        test: test
       })
-    });
-
-    socket.on('get test', ({test, room}) => {
-      if (room === this.state.room){
-        this.setState({
-          test: test
-        })
-      }
-    });
-  }
-
-  joinGame1OnClick () {
-    var socket = io.connect('/');
-    socket.on('onconnected', (data) => {
-      console.log('connected successfuly to the socket.io server. My server side ID is ', data.id);
-      socket.emit('join', 'room1');
-    });
-
-    socket.on('room info', ({clientID, adapter}) => {
-      console.log("clientID: ",clientID); //client id
-      console.log("adapter: ",adapter); //data.adapter.room1 || data.adapter.room2
-      this.setState({
-        socket: socket,
-        room: 'room1',
-        clientID: clientID
-      })
-    });
-
-    socket.on('get test', ({test, room}) => {
-      if (room === this.state.room){
-        this.setState({
-          test: test
-        })
-      }
-    });
-  }
-
-  joinGame2OnClick () {
-    var socket = io.connect('/');
-    socket.on('onconnected', (data) => {
-      console.log('connected successfuly to the socket.io server. My server side ID is ', data.id);
-      socket.emit('join', 'room2');
-    });
-
-    socket.on('room info', ({clientID, adapter}) => {
-      console.log("clientID: ",clientID);
-      console.log("adapter: ",adapter);
-      this.setState({
-        socket: socket,
-        room: 'room2',
-        clientID: clientID
-      })
-    });
-
-    socket.on('get test', ({test, room}) => {
-      if (room === this.state.room){
-        this.setState({
-          test: test
-        })
-      }
     });
   }
 
   test() {
     console.log('click');
     this.state.socket.emit('send test', {
-      test: 'HELL YEAH I GET IT!!!',
+      test: 'HELL YEAH I GET IT!!! ',
       room: this.state.room
     });
     this.setState({
-      test: 'HELL YEAH I GET IT!!!'
+      test: 'HELL YEAH I GET IT!!! ' + this.state.room
     })
   }
 
@@ -432,13 +349,10 @@ class App extends React.Component {
                   keyValue=" "
                   onKeyHandle={ (e) => this.move('spacebar') } />
 
-    {/* This code is Jack's Game Room Test
+     {/*This code is Jack's Game Room Test*/}
 
-      <button onClick={this.newGame1OnClick}> New Game room 1</button>
-      <button onClick={this.newGame2OnClick}> New Game room 2</button>
-      <br></br>
-      <button onClick={this.joinGame1OnClick}> Join Game room 1</button>
-      <button onClick={this.joinGame2OnClick}> Join Game room 2</button>
+
+      <button onClick={this.joinGameOnClick}> Join Game Room </button>
       <br></br>
       <button onClick={this.test}> test </button>
 
@@ -447,11 +361,11 @@ class App extends React.Component {
       </div>
 
       <div>
-        <p>{JSON.stringify(this.state.clientID)}</p>
-        <p>{this.state.room.toString()}</p>
+        <p>ClientID: {this.state.clientID}</p>
+        <p>Room: {this.state.room.toString()}</p>
       </div> 
 
-    */}
+    
 
       <Game player={ this.state.player } 
             boxes={ this.state.boxes }
