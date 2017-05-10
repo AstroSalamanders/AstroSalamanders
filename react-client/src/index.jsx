@@ -27,6 +27,7 @@ class App extends React.Component {
 
       player: { x: 33, y: 33 },
       boxes: [ { open: false, pos: { x: 64, y: 160 }} ],
+      bombs: [],
       blocks: [  
                 // top edge
                 { x: 0, y: 0 },
@@ -389,7 +390,15 @@ class App extends React.Component {
       }
 
       else if ( dir === 'spacebar' ){
-        alert("BOOM!");
+        console.log('Boom!!!');
+       
+        let newBomb = { x: this.state.player.x, y: this.state.player.y };
+        let currentBombs = this.state.bombs;
+        currentBombs.push(newBomb);
+
+        this.setState({ bombs: currentBombs });
+
+        console.log(this.state.bombs)
       }
 
   }
@@ -446,7 +455,8 @@ class App extends React.Component {
 
       <Game player={ this.state.player } 
             boxes={ this.state.boxes }
-            blocks={ this.state.blocks } />
+            blocks={ this.state.blocks } 
+            bombs={ this.state.bombs }/>
 
     </div>)
   }

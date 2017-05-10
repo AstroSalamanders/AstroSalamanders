@@ -32,7 +32,8 @@ class Game extends React.Component {
 
           <Board player={ this.props.player }
                  boxes={ this.props.boxes }
-                 blocks={ this.props.blocks } />
+                 blocks={ this.props.blocks } 
+                 bombs={ this.props.bombs }/>
 
         </div>
 
