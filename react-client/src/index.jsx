@@ -413,11 +413,11 @@ class App extends React.Component {
           let flameBottom = {x: newBomb.x, y: newBomb.y - 32};
 
           this.setState({ flames: [flameTop, flameLeft, flameMid, flameRight, flameBottom] })
-          this.setState({ bombs: currentBombs.splice(1,1) });
+          this.setState({ bombs: currentBombs.splice(1) });
           
           console.log('Flames state', this.state.flames);
 
-          setTimeout(() => {
+          setTimeout( () => {
             this.setState({ flames: [] });
           }, 1000)
 
