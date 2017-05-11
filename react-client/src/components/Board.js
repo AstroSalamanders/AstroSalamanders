@@ -3,7 +3,8 @@ import React from 'react';
 import Player from './Player.js';
 import Box from './Box.js';
 import Block from './Block.js';
-import Bomb from './Bomb.js'
+import Bomb from './Bomb.js';
+import Flame from './Flame.js';
 
 
 class Board extends React.Component {
@@ -37,6 +38,9 @@ class Board extends React.Component {
         <div id="Board">
 
           <Player pos={ this.props.player } />
+
+          { this.props.flames.map( (flame,x) =>
+            <Flame key = {x} pos={{x: flame.x, y: flame.y}}  /> ) }
 
           { this.props.bombs.map( (bomb,x) =>
             <Bomb key = {x} pos={{x: bomb.x, y: bomb.y}}  /> ) }
