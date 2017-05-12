@@ -121,20 +121,16 @@ class App extends React.Component {
   }
   
   destroyBlock(loc){
-    // test location
-    loc = { x: 64, y: 160 }
-    //takes in a location element; estimates the closest and removes box at that location
-
 
     var newBoxesArray =  this.state.boxes.filter((box)=>{
-      console.log(box, loc, box.x, loc.x, box.y, loc.y)
+      //console.log(box, loc, box.x, loc.x, box.y, loc.y)
       if(box.pos.x === loc.x && box.pos.y === loc.y){
         return false;
       } else {
         return true;
       }
     })
-    console.log(newBoxesArray)
+    //console.log(newBoxesArray)
     this.setState({boxes: newBoxesArray})
     this.destroyPlayer(loc)
   }
@@ -148,7 +144,7 @@ class App extends React.Component {
       playerRect.x + playerRect.width > destructRect.x &&
       playerRect.y < destructRect.y + destructRect.height &&
       playerRect.y + playerRect.height > destructRect.y){
-      alert('Player Dead!')
+      alert('Player Dead!');
     }
   }
 
@@ -268,7 +264,11 @@ class App extends React.Component {
           let flameBottom = {x: newBomb.x, y: newBomb.y - 32};
 
           this.setState({ flames: [flameTop, flameLeft, flameMid, flameRight, flameBottom] })
-          this.setState({ bombs: currentBombs.splice(1) });
+          this.setState({ bombs: this.state.bombs.splice(1) });
+          
+          this.state.flames.forEach((flame) => {
+            this.destroyBlock(flame);
+          })
           
           console.log('Flames state', this.state.flames);
 
@@ -335,6 +335,7 @@ class App extends React.Component {
         let result;
         // use dir to return how the max we can move in that direction
         if ( dir === 'up' ){ 
+
           console.log( player.y +" - ("+ block.y +" + "+ boxsize +") - "+ this.state[this.state.player].y);
           return (this.state[this.state.player].y - (block.y + boxsize)); 
         }
@@ -393,6 +394,7 @@ class App extends React.Component {
     return step; 
 
   }
+
 
 
 

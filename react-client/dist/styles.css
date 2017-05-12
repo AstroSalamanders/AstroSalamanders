@@ -40,6 +40,7 @@ body{
 
 /* dont break */
 .block {
+  z-index: 75;
   width: 32px;
   height: 32px;
   min-width: 32px;
@@ -56,6 +57,7 @@ body{
 /* brake */
 .box {
   /*border: 1px solid red;*/
+  z-index: 55;
   width: 32px;
   height: 32px;
   min-width: 32px;
@@ -101,6 +103,7 @@ body{
 }
 
 .bomb {
+  z-index: 50;
   width: 25px;
   height: 25px;
   background: url(./assets/Bomb/Bomb_f01.png);
@@ -109,6 +112,7 @@ body{
 }
 
 .flame {
+    z-index: 60;
     width: 32px;
     height: 32px;
     background: url(./assets/Flame/Flame_f00.png);
