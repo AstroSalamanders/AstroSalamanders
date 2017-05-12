@@ -13,7 +13,7 @@ class App extends React.Component {
       socket: () => {},
       clientID: '',
       room: '',
-
+      actions: [],
       /* 
          the state of the app should live in the outmost component
          and be passed down through props.
@@ -121,13 +121,13 @@ class App extends React.Component {
   destroyBlock(loc){
     loc = { x: 64, y: 160 }
     //takes in a location element; estimates the closest and removes box at that location
-    var customFloor = function(coord){
+    let customFloor = function(coord){
       return Math.floor(coord / 32) * 32;
     }
     loc.x = customFloor(loc.x)
     loc.y = customFloor(loc.y)
 
-    var newBoxesArray =  this.state.boxes.filter((box)=>{
+    let newBoxesArray =  this.state.boxes.filter((box)=>{
       console.log(box, loc, box.x, loc.x, box.y, loc.y)
       if(box.pos.x === loc.x && box.pos.y === loc.y){
         return false;
@@ -141,8 +141,8 @@ class App extends React.Component {
   }
 
   destroyPlayer(loc){
-    var playerRect = {x: this.state.player.x, y: this.state.player.y, width: 17, height: 29}
-    var destructRect = {x: loc.x, y:loc.y, width: 32, height: 32}
+    let playerRect = {x: this.state.player.x, y: this.state.player.y, width: 17, height: 29}
+    let destructRect = {x: loc.x, y:loc.y, width: 32, height: 32}
 
     if(playerRect.x < destructRect.x + destructRect.width &&
       playerRect.x + playerRect.width > destructRect.x &&
@@ -153,13 +153,13 @@ class App extends React.Component {
   }
 
   joinGameOnClick () {
-    var socket = io.connect('/');
+    let socket = io.connect('/');
     socket.on('onconnected', (data) => {
       console.log('connected successfuly to the socket.io server. My server side ID is ', data.id);
       socket.emit('join');
     });
 
-    socket.on('room info', ({clientID, room, adapter}) => {
+    socket.on('room info', ({ clientID, room, adapter }) => {
       console.log("clientID: ", clientID);
       console.log("room: ", room); 
       console.log("adapter: ", adapter); 
@@ -170,7 +170,7 @@ class App extends React.Component {
       })
     });
 
-    socket.on('get test', ({test}) => {
+    socket.on('get test', ({ test }) => {
       this.setState({
         test: test
       })
@@ -183,6 +183,8 @@ class App extends React.Component {
       test: 'HELL YEAH I GET IT!!! ',
       room: this.state.room
     });
+    //socket.emit only send message to the server and let other client know
+    //we have to also change current client state
     this.setState({
       test: 'HELL YEAH I GET IT!!! ' + this.state.room
     })
@@ -222,7 +224,7 @@ class App extends React.Component {
       let block = this.state.blocks[n];
 
       // if collition with a block
-      if  ( 
+      if ( 
             // if player's right side
             ((player.x + playerWidth) > block.x)  
             &&
@@ -234,7 +236,7 @@ class App extends React.Component {
             && 
             // player top
             (player.y < (block.y + boxsize)) 
-          ){
+      ) {
 
         console.log("BOX COLLISION");
 
@@ -268,7 +270,7 @@ class App extends React.Component {
       let box = this.state.boxes[n];
 
       // if collition with a box
-      if  ( 
+      if ( 
             // if player's right side
             ((player.x + playerWidth) > box.pos.x)  
             &&
@@ -280,7 +282,7 @@ class App extends React.Component {
             && 
             // player top
             (player.y < (box.pos.y + boxsize)) 
-          ){
+      ) {
 
         console.log("BOX COLLISION");
 
@@ -302,80 +304,137 @@ class App extends React.Component {
 
   move(dir){
 
-      if ( dir === 'up' ){
-
-          // normal move
-          this.setState({ player: { 
-            x: this.state.player.x, 
-            y: this.state.player.y - this.canMove(dir) } 
-          });
-
+    if ( dir === 'up' ){
+      //store actions in an array in state
+      let action = {
+        timestamp: new Date(),
+        room: this.state.room,
+        player: 'player1',
+        action: 'up'
       }
+      let newActions = this.state.actions;
+      newActions.push(action);
+
+      // normal move
+      this.setState({
+        player: { 
+          x: this.state.player.x, 
+          y: this.state.player.y - this.canMove(dir) 
+        },
+        actions: newActions
+      });
+    }
 
 
-      else if ( dir === 'down' ){
-
-          this.setState({ player: { 
-            x: this.state.player.x, 
-            y: this.state.player.y + this.canMove(dir) 
-          } });
-
+    else if ( dir === 'down' ){
+      //store actions in an array in state
+      let action = {
+        timestamp: new Date(),
+        room: this.state.room,
+        player: 'player1',
+        action: 'down'
       }
+      let newActions = this.state.actions;
+      newActions.push(action);
+
+      this.setState({ 
+        player: { 
+          x: this.state.player.x, 
+          y: this.state.player.y + this.canMove(dir) 
+        },
+        actions: newActions
+      });
+    }
 
 
-      else if ( dir === 'right' ){
-
-          this.setState({ player: { 
-            x: this.state.player.x + this.canMove(dir), 
-            y: this.state.player.y } 
-          });
-
+    else if ( dir === 'right' ){
+      //store actions in an array in state
+      let action = {
+        timestamp: new Date(),
+        room: this.state.room,
+        player: 'player1',
+        action: 'right'
       }
+      let newActions = this.state.actions;
+      newActions.push(action);
+
+      this.setState({
+        player: { 
+          x: this.state.player.x + this.canMove(dir), 
+          y: this.state.player.y 
+        },
+        actions: newActions 
+      });
+    }
 
 
-      else if ( dir === 'left' ){
-
-          this.setState({ player: { 
-            x: this.state.player.x - this.canMove(dir), 
-            y: this.state.player.y } 
-          });
-
+    else if ( dir === 'left' ){
+      //store actions in an array in state
+      let action = {
+        timestamp: new Date(),
+        room: this.state.room,
+        player: 'player1',
+        action: 'right'
       }
+      let newActions = this.state.actions;
+      newActions.push(action);
 
-      else if ( dir === 'spacebar' ){
-        //function to center bombs
-        let customFloor = (coord) => {
-          return Math.floor(coord/32) * 32;
-        }
-       
-        //create new bombs/update bomb state
-        let newBomb = { x: customFloor(this.state.player.x), y: customFloor(this.state.player.y) };
-        let currentBombs = this.state.bombs;
-        currentBombs.push(newBomb);
+      this.setState({ 
+        player: { 
+          x: this.state.player.x - this.canMove(dir), 
+          y: this.state.player.y 
+        },
+        actions: newActions
+      });
+    }
 
-        this.setState({ bombs: currentBombs });
+    else if ( dir === 'spacebar' ){
+      //function to center bombs
+      let customFloor = (coord) => {
+        return Math.floor(coord/32) * 32;
+      }
+      
+      //create new bombs/update bomb state
+      let newBomb = { x: customFloor(this.state.player.x), y: customFloor(this.state.player.y) };
+      let currentBombs = this.state.bombs;
+      currentBombs.push(newBomb);
+
+      //store actions in an array in state
+      let action = {
+        timestamp: new Date(),
+        room: this.state.room,
+        player: 'player1',
+        action: 'spacebar'
+      }
+      let newActions = this.state.actions;
+      newActions.push(action); 
+
+      this.setState({ 
+        bombs: currentBombs,
+        actions: newActions
+      });
+      
+      //when bomb explodes, set flames state
+      setTimeout( ()=> {
+        console.log('BOOM!!!');
+        let flameTop = {x: newBomb.x, y: newBomb.y + 32}; 
+        let flameLeft = {x: newBomb.x - 32, y: newBomb.y};
+        let flameMid = {x: newBomb.x, y: newBomb.y};
+        let flameRight = {x: newBomb.x + 32, y: newBomb.y};
+        let flameBottom = {x: newBomb.x, y: newBomb.y - 32};
+
+        this.setState({ flames: [flameTop, flameLeft, flameMid, flameRight, flameBottom] })
+        this.setState({ bombs: currentBombs.splice(1) });
         
-        //when bomb explodes, set flames state
-        setTimeout( ()=> {
-          console.log('BOOM!!!');
-          let flameTop = {x: newBomb.x, y: newBomb.y + 32}; 
-          let flameLeft = {x: newBomb.x - 32, y: newBomb.y};
-          let flameMid = {x: newBomb.x, y: newBomb.y};
-          let flameRight = {x: newBomb.x + 32, y: newBomb.y};
-          let flameBottom = {x: newBomb.x, y: newBomb.y - 32};
+        console.log('Flames state', this.state.flames);
 
-          this.setState({ flames: [flameTop, flameLeft, flameMid, flameRight, flameBottom] })
-          this.setState({ bombs: currentBombs.splice(1) });
-          
-          console.log('Flames state', this.state.flames);
+        setTimeout( () => {
+          this.setState({ flames: [] });
+        }, 1000)
 
-          setTimeout( () => {
-            this.setState({ flames: [] });
-          }, 1000)
+      }, 3000)
 
-        }, 3000)
-
-      }
+    }
 
   }
 
@@ -410,23 +469,24 @@ class App extends React.Component {
                   keyValue=" "
                   onKeyHandle={ (e) => this.move('spacebar') } />
 
-     {/*This code is Jack's Game Room Test*/}
+      {/*
+        This code is Jack's Game Room Test
+        Comment it out when you working on other component
+      */}
+      <button onClick={ this.joinGameOnClick }> Join Game Room </button>
+      <button onClick={ this.test }> test </button>
 
+      <div id="test">
+        <p>{ this.state.test }</p>
+        <p> ClientID: { this.state.clientID }</p>
+        <p> Room: { this.state.room.toString() }</p>
 
-      <button onClick={this.joinGameOnClick}> Join Game Room </button>
-      <br></br>
-      <button onClick={this.test}> test </button>
-
-      <div id='test'>
-        {this.state.test}
-      </div>
-
-      <div>
-        <p>ClientID: {this.state.clientID}</p>
-        <p>Room: {this.state.room.toString()}</p>
+        { this.state.actions.map((action, index) => (
+          <p key={index}>{JSON.stringify(action)}</p>
+        ))}
       </div> 
+      {/*End of Jack's Game Room Test*/}
 
-    
 
       <Game player={ this.state.player } 
             boxes={ this.state.boxes }
