@@ -82,6 +82,32 @@ var Game = function(roomid){
               ]
 }
 
+Game.prototype.destroyBlock = (loc, player, context) => {
+    console.log("destroyBlocks's this", context);
+    var newBoxesArray = context.boxes.filter((box)=>{
+      //console.log(box, loc, box.x, loc.x, box.y, loc.y)
+      if(box.pos.x === loc.x && box.pos.y === loc.y){
+        return false;
+      } else {
+        return true;
+      }
+    })
+    console.log(newBoxesArray)
+    context.boxes = newBoxesArray;
+    context.destroyPlayer(loc, player, context)
+  }
+
+Game.prototype.destroyPlayer = (loc, player, context) => {
+    // Takes target tile, currently checks if player is standing in destruction tile.
+    var playerRect = {x: context[player].x, y: context[player].y, width: 17, height: 29}
+    var destructRect = {x: loc.x, y:loc.y, width: 32, height: 32}
+
+    if(playerRect.x < destructRect.x + destructRect.width &&
+      playerRect.x + playerRect.width > destructRect.x &&
+      playerRect.y < destructRect.y + destructRect.height &&
+      playerRect.y + playerRect.height > destructRect.y){
+    }
+  }
 
 Game.prototype.move = function(dir, player){
 
@@ -105,7 +131,44 @@ Game.prototype.move = function(dir, player){
         x: this[player].x - canMove(dir, player, this),
         y: this[player].y
       }
-    }
+    } else if ( dir === 'spacebar' ){
+        //function to center bombs
+        let customFloor = (coord) => {
+          return Math.floor(coord/32) * 32;
+        }
+       
+        //create new bombs/update bomb state
+        let newBomb = { x: customFloor(this[player].x), y: customFloor(this[player].y) };
+        let currentBombs = this.bombs;
+        currentBombs.push(newBomb);
+
+        this.bombs = currentBombs;
+        
+        //when bomb explodes, set flames state
+        setTimeout( ()=> {
+          console.log('BOOM!!!');
+          let flameTop = {x: newBomb.x, y: newBomb.y + 32}; 
+          let flameLeft = {x: newBomb.x - 32, y: newBomb.y};
+          let flameMid = {x: newBomb.x, y: newBomb.y};
+          let flameRight = {x: newBomb.x + 32, y: newBomb.y};
+          let flameBottom = {x: newBomb.x, y: newBomb.y - 32};
+
+          this.flames = [flameTop, flameLeft, flameMid, flameRight, flameBottom];
+          this.bombs = this.bombs.splice(1);
+          
+          this.flames.forEach((flame) => {
+            this.destroyBlock(flame, player, this);
+          })
+          
+          console.log('Flames state', this.flames);
+
+          setTimeout( () => {
+            this.flames = [];
+          }, 1000)
+
+        }, 3000)
+
+      }
 
 }
 
