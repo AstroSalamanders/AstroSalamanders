@@ -106,7 +106,7 @@ Game.prototype.move = function(dir, player){
         y: this[player].y
       }
     }
-      console.log(this[player])
+      console.log(this[player], canMove(dir, player, this), dir)
 
 }
 
@@ -162,22 +162,19 @@ var canMove = function (dir, playerNumber, object){
 
       let result;
       // use dir to return how the max we can move in that direction
-      if ( dir === 'up' ){ 
-        console.log( player.y +" - ("+ block.y +" + "+ boxsize +") - "+ player.y);
-        return (player.y - (block.y + boxsize)); 
-      }
+      if ( dir === 'up' ){ return (player.y + step - (block.y + boxsize)); }
 
       else if ( dir === 'down' ){ 
         console.log( (player.y + playerHeight)+" - "+ block.y);
-        return block.y - (player.y + playerHeight); 
+        return block.y - (player.y - step + playerHeight); 
       }
 
       else if ( dir === 'right' ){ 
-        return block.x - (player.x + playerWidth); 
+        return block.x - (player.x - step + playerWidth); 
       }
 
       else if ( dir === 'left' ){ 
-        return player.x - (block.x + boxsize); 
+        return player.x + step - (block.x + boxsize); 
       }
 
     } 
