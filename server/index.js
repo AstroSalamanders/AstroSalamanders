@@ -40,6 +40,7 @@ var roomList = new DLL();
 var roomNumCounter = 0;
 var clientID_room_table = {}; // clientID : room node
 var games = {};
+var updateInterval = 100;
 
 //Socket.io will call this function when a client connects, 
 //So we can send that client a unique ID we use so we can 
@@ -149,9 +150,13 @@ sio.sockets.on('connection', (client) => {
 
   client.on('action',({dir, room, player}) => {
     games[room].move(dir, player)
-    client.in(room).broadcast.emit('update', games[room])
   })
 
+  setInterval(function(){
+    for(var room in games){
+      client.in(room).broadcast.emit('update', games[room])
+    }
+  }, updateInterval)
 
 }); //sio.sockets.on connection
 
@@ -161,6 +166,18 @@ sio.sockets.on('connection', (client) => {
 
 
 
+// function broadcastingLoop() {
+//   for(var g in games) {
+//     var game = games[g];
+//     for(var i in game.players) {
+//       var player = game.players[i];
+//       if(player.alive && player.hasMoved) {
+//         io.to(g).emit("m", {id: player.id, x: player.x, y: player.y, f: player.facing});
+//         player.hasMoved = false;
+//       }
+//     }
+//   }
+// };
 
 
 // Testing Movement
