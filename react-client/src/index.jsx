@@ -181,9 +181,8 @@ class App extends React.Component {
       })
     });
 
-
-
     socket.on('update', (gameState)=>{
+      console.log(gameState.playerOne)
       this.setState(gameState)
     })
   }

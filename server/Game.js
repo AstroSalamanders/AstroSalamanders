@@ -106,7 +106,6 @@ Game.prototype.move = function(dir, player){
         y: this[player].y
       }
     }
-      console.log(this[player], canMove(dir, player, this), dir)
 
 }
 
@@ -165,7 +164,6 @@ var canMove = function (dir, playerNumber, object){
       if ( dir === 'up' ){ return (player.y + step - (block.y + boxsize)); }
 
       else if ( dir === 'down' ){ 
-        console.log( (player.y + playerHeight)+" - "+ block.y);
         return block.y - (player.y - step + playerHeight); 
       }
 
@@ -215,7 +213,6 @@ var canMove = function (dir, playerNumber, object){
   };
 
   // nothing stopped us, we can move full step
-  console.log(step)
   return step; 
 }
 
