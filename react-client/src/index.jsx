@@ -140,7 +140,7 @@ class App extends React.Component {
       playerRect.x + playerRect.width > destructRect.x &&
       playerRect.y < destructRect.y + destructRect.height &&
       playerRect.y + playerRect.height > destructRect.y){
-      console.log('Player Dead!');
+      alert('Player Dead!');
     }
   }
 
@@ -336,6 +336,7 @@ class App extends React.Component {
 
       else if ( dir === 'spacebar' ){
         //function to center bombs
+        // if (this.state.bombs.length < 2) {
         let customFloor = (coord) => {
           return Math.floor(coord/32) * 32;
         }
@@ -346,6 +347,7 @@ class App extends React.Component {
         currentBombs.push(newBomb);
 
         this.setState({ bombs: currentBombs });
+          console.log('On drop', this.state.bombs)
         
         //when bomb explodes, set flames state
         setTimeout( ()=> {
@@ -357,25 +359,28 @@ class App extends React.Component {
           let flameBottom = {x: newBomb.x, y: newBomb.y - 32};
 
           this.setState({ flames: [flameTop, flameLeft, flameMid, flameRight, flameBottom] })
-          this.setState({ bombs: currentBombs.splice(1) });
+          this.setState({ bombs: this.state.bombs.splice(1) });
           
-          this.destroyBlock(flameTop);
-          this.destroyBlock(flameLeft);
-          this.destroyBlock(flameMid);
-          this.destroyBlock(flameRight);
-          this.destroyBlock(flameBottom);
-
+          this.state.flames.forEach((flame) => {
+            this.destroyBlock(flame);
+          })
+           console.log('On explode', this.state.bombs)
           //console.log('Flames state', this.state.flames);
 
           setTimeout( () => {
             this.setState({ flames: [] });
           }, 1000)
 
-        }, 3000)
+        }, 5000)
+      // } else {
+      //   console.log('TOO MANY BOMBS')
+      // }
 
-      }
+    }
 
   }
+
+
 
 
 
