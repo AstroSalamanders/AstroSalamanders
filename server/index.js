@@ -5,9 +5,11 @@ var io = require('socket.io');
 var UUID = require('node-uuid');
 var http = require('http');
 var DLL = require('./DoubleLinkedList.js');
+var Game = require('./Game.js')
 
 var app = express();
 var server = http.createServer(app);
+
 
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/../react-client/dist'));
@@ -37,6 +39,7 @@ sio.use(function(socket, next) {
 var roomList = new DLL();
 var roomNumCounter = 0;
 var clientID_room_table = {}; // clientID : room node
+var games = {};
 
 //Socket.io will call this function when a client connects, 
 //So we can send that client a unique ID we use so we can 
@@ -96,6 +99,7 @@ sio.sockets.on('connection', (client) => {
       roomNumCounter++; // 0 => 1
       room = 'room' + roomNumCounter; //room + 1 = room1
       roomList.push(room);
+      games[room] = new Game(); // Adding new game instance with room name as key
     }
     //when there are less than 2, but not 0 clientID in the last room
     //it is a available room to join
@@ -110,6 +114,7 @@ sio.sockets.on('connection', (client) => {
       room = 'room' + roomNumCounter;
       console.log(roomList.tail.val + ' full, swith to next: ' + room);
       roomList.push(room);
+      games[room] = new Game();
     }
     //store the key-value pair of client and room node
     clientID_room_table[client.userid] = roomList.tail;
@@ -122,10 +127,16 @@ sio.sockets.on('connection', (client) => {
     client.emit('room info', {
       clientID: Object.keys(client.rooms)[0],
       room: room,
-      adapter: client.adapter.rooms
+      adapter: client.adapter.rooms,
+      playerNumber: client.adapter.rooms[roomList.tail.val].length
     });
+
+    console.log(JSON.stringify(games[room]))
+
+
   })
   
+
 
   client.on('send test', ({test, room}) => {
     console.log('send test');
@@ -133,6 +144,15 @@ sio.sockets.on('connection', (client) => {
       test: test + 'from ' + room
     });
   })
+
+
+
+  client.on('action',({dir, room, player}) => {
+    games[room].move(dir, player)
+    client.in(room).broadcast.emit('update', games[room])
+  })
+
+
 }); //sio.sockets.on connection
 
 
@@ -142,4 +162,112 @@ sio.sockets.on('connection', (client) => {
 
 
 
+
+// Testing Movement
+
+
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('right', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('left', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('left', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('left', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('left', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('left', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('left', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('left', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('left', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('left', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('left', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('left', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
+    // games[room].move('down', 'playerOne')
 

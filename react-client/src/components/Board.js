@@ -28,7 +28,6 @@ class Board extends React.Component {
 
     $(Board).css({ top: topMargin, left: leftMargin });
     // console.log("Board Margins left: %s top: %s", leftMargin, topMargin )
-
   }
 
   render(){
