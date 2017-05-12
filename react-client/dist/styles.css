@@ -86,6 +86,22 @@ body{
     background-position-x: -2px;
     position: absolute;
 }
+
+.playertwo {
+    z-index: 100;
+    transition: top .1s, left .1s;
+    transition-timing-function: linear;
+    width: 17px;
+    height: 29px;
+    border: 1px solid black;
+    background: url(./assets/Bomberman/Front/Bman_F_f07.png);
+    background-size: 19px 39px;
+    background-repeat: no-repeat;
+    background-position-y: -11px;
+    background-position-x: -2px;
+    position: absolute;
+}
+
 .bomb {
   z-index: 50;
   width: 25px;

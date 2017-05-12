@@ -1,6 +1,7 @@
 /* Board component ( under players, blocks, boxes ) bottom layer ( sibling on rendering container ) */
 import React from 'react';
 import Player from './Player.js';
+import PlayerTwo from './PlayerTwo.js';
 import Box from './Box.js';
 import Block from './Block.js';
 import Bomb from './Bomb.js';
@@ -28,7 +29,6 @@ class Board extends React.Component {
 
     $(Board).css({ top: topMargin, left: leftMargin });
     // console.log("Board Margins left: %s top: %s", leftMargin, topMargin )
-
   }
 
   render(){
@@ -38,6 +38,8 @@ class Board extends React.Component {
         <div id="Board">
 
           <Player pos={ this.props.player } />
+
+          <PlayerTwo pos={ this.props.playerTwo } />
 
           { this.props.flames.map( (flame,x) =>
             <Flame key = {x} pos={{x: flame.x, y: flame.y}}  /> ) }

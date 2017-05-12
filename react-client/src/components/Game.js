@@ -29,12 +29,13 @@ class Game extends React.Component {
   render(){
     return( 
         <div id="Game">
-
           <Board player={ this.props.player }
+                 playerTwo = { this.props.playerTwo }
                  boxes={ this.props.boxes }
                  blocks={ this.props.blocks } 
                  bombs={ this.props.bombs }
                  flames={ this.props.flames }/>
+        }
 
         </div>
 
