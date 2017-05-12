@@ -4,7 +4,7 @@ class Bomb extends React.Component{
 
   constructor(props){
     super(props);
-    console.log('Bomb position', props.pos)
+    //console.log('Bomb position', props.pos)
   }
 
   render(){

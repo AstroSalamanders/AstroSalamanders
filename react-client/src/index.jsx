@@ -119,23 +119,15 @@ class App extends React.Component {
   }
   
   destroyBlock(loc){
-    loc = { x: 64, y: 160 }
-    //takes in a location element; estimates the closest and removes box at that location
-    var customFloor = function(coord){
-      return Math.floor(coord / 32) * 32;
-    }
-    loc.x = customFloor(loc.x)
-    loc.y = customFloor(loc.y)
-
     var newBoxesArray =  this.state.boxes.filter((box)=>{
-      console.log(box, loc, box.x, loc.x, box.y, loc.y)
+      //console.log(box, loc, box.x, loc.x, box.y, loc.y)
       if(box.pos.x === loc.x && box.pos.y === loc.y){
         return false;
       } else {
         return true;
       }
     })
-    console.log(newBoxesArray)
+    //console.log(newBoxesArray)
     this.setState({boxes: newBoxesArray})
     this.destroyPlayer(loc)
   }
@@ -148,7 +140,7 @@ class App extends React.Component {
       playerRect.x + playerRect.width > destructRect.x &&
       playerRect.y < destructRect.y + destructRect.height &&
       playerRect.y + playerRect.height > destructRect.y){
-      alert('Player Dead!')
+      console.log('Player Dead!');
     }
   }
 
@@ -241,12 +233,12 @@ class App extends React.Component {
         let result;
         // use dir to return how the max we can move in that direction
         if ( dir === 'up' ){ 
-          console.log( player.y +" - ("+ block.y +" + "+ boxsize +") - "+ this.state.player.y);
+          //console.log( player.y +" - ("+ block.y +" + "+ boxsize +") - "+ this.state.player.y);
           return (this.state.player.y - (block.y + boxsize)); 
         }
 
         else if ( dir === 'down' ){ 
-          console.log( (player.y + playerHeight)+" - "+ block.y);
+          //console.log( (player.y + playerHeight)+" - "+ block.y);
           return block.y - (this.state.player.y + playerHeight); 
         }
 
@@ -367,7 +359,13 @@ class App extends React.Component {
           this.setState({ flames: [flameTop, flameLeft, flameMid, flameRight, flameBottom] })
           this.setState({ bombs: currentBombs.splice(1) });
           
-          console.log('Flames state', this.state.flames);
+          this.destroyBlock(flameTop);
+          this.destroyBlock(flameLeft);
+          this.destroyBlock(flameMid);
+          this.destroyBlock(flameRight);
+          this.destroyBlock(flameBottom);
+
+          //console.log('Flames state', this.state.flames);
 
           setTimeout( () => {
             this.setState({ flames: [] });
