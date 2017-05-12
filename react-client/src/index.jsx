@@ -431,8 +431,8 @@ class App extends React.Component {
       <Game player={ this.state.player } 
             boxes={ this.state.boxes }
             blocks={ this.state.blocks } 
+            flames={ this.state.flames }
             bombs={ this.state.bombs }/>
-
     </div>)
   }
 }

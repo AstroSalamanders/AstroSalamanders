@@ -28,6 +28,10 @@ List.prototype.shift = function () {
   // Empty list
   if (this.head === null && this.tail === null) {
     return null;
+  // One element in list
+  } else if (this.head === this.tail) {
+    this.head = null;
+    this.tail = null;
   // Not empty list.
   } else {
     var head = this.head;
@@ -57,6 +61,10 @@ List.prototype.pop = function () {
   // Empty list
   if (this.head === null && this.tail === null) {
     return null;
+  // One element in list
+  } else if (this.head === this.tail) {
+    this.head = null;
+    this.tail = null;
   // Not empty list.
   } else {
     var tail = this.tail;
