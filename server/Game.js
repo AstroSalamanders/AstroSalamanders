@@ -1,8 +1,8 @@
 var _ = require('underscore');
 
 var Game = function(roomid){
-  this.playerOne = {x: 33, y: 33};
-  this.playerTwo = {x: 225, y: 417};
+  this.playerOne = { x: 33, y: 33, dir: 'down', frame: 1 };
+  this.playerTwo = { x: 225, y: 417, dir: 'down' };
   this.boxes = [ { open: false, pos: { x: 64, y: 160 }} ];
   this.bombs = [];
   this.flames = [];
@@ -111,23 +111,50 @@ Game.prototype.destroyPlayer = (loc, player, context) => {
 
 Game.prototype.move = function(dir, player){
 
+    // set sprite direction
+    // if (dir !== 'spacebar'){
+    //   this[player].dir = dir;
+    // }
+
+    console.log("Server Player Dir: ", this[player].dir)
     if ( dir === 'up' ){
       this[player] = {
+        frame: (( dir !== this[player].dir ) ? 1 : 
+                       (this[player].frame === 3) ? 
+                        this[player].frame - 1 : 
+                        this[player].frame + 1),
+        dir: dir,
         x: this[player].x,
         y: this[player].y - canMove(dir, player, this)
+
       }
     } else if(dir ==='down'){
       this[player] = {
+        frame: (( dir !== this[player].dir ) ? 1 : 
+                       (this[player].frame === 3) ? 
+                        this[player].frame - 1 : 
+                        this[player].frame + 1),
+        dir: dir,
         x: this[player].x,
         y: this[player].y + canMove(dir, player, this)
       }
     } else if(dir ==='right'){
       this[player] = {
+        frame: (( dir !== this[player].dir ) ? 1 : 
+                       (this[player].frame === 3) ? 
+                        this[player].frame - 1 : 
+                        this[player].frame + 1),
+        dir: dir,
         x: this[player].x + canMove(dir, player, this),
         y: this[player].y
       }
     } else if(dir ==='left'){
       this[player] = {
+        frame: (( dir !== this[player].dir ) ? 1 : 
+                       (this[player].frame === 3) ? 
+                        this[player].frame - 1 : 
+                        this[player].frame + 1),
+        dir: dir,
         x: this[player].x - canMove(dir, player, this),
         y: this[player].y
       }
@@ -187,10 +214,10 @@ var canMove = function (dir, playerNumber, object){
       height: 480px
   */
 
-  let step = 5;
+  let step = 6;
   let player = _.extend({}, object[playerNumber]);
-  let playerWidth = 17;
-  let playerHeight = 29; 
+  let playerWidth = 20;
+  let playerHeight = 28; 
   let boxsize = 32;
 
   // first get what would be updated player coord
@@ -217,14 +244,15 @@ var canMove = function (dir, playerNumber, object){
           ((player.y + playerHeight) > block.y) 
           && 
           // player top
-          (player.y < (block.y + boxsize)) 
+          (player.y < (block.y + (boxsize - 10))) 
         ){
 
-      console.log("BOX COLLISION");
+      console.log("BLOCK COLLISION");
 
       let result;
       // use dir to return how the max we can move in that direction
-      if ( dir === 'up' ){ return (player.y + step - (block.y + boxsize)); }
+      if ( dir === 'up' ){ 
+        return (player.y + step - (block.y + (boxsize-10))); }
 
       else if ( dir === 'down' ){ 
         return block.y - (player.y - step + playerHeight); 

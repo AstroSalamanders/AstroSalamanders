@@ -26,8 +26,8 @@ class App extends React.Component {
          Since the blocks won't change, they could be a state of the board component itself
       */
       player: 'playerTwo',
-      playerOne: { x: 33, y: 33 },
-      playerTwo: { x: 225, y: 417 },
+      playerOne: { x: 33, y: 33, dir: 'down', frame: 1 },
+      playerTwo: { x: 225, y: 417, dir: 'down', frame: 1 },
       boxes: [ { open: false, pos: { x: 64, y: 160 }} ],
       bombs: [],
       flames: [],
@@ -83,7 +83,6 @@ class App extends React.Component {
                 { x: 0, y: 352 },
                 { x: 0, y: 384 },
                 { x: 0, y: 416 },
-                { x: 0, y: 448 },
 
                 // inside blocks
                 { x: 64, y: 64},
@@ -113,11 +112,13 @@ class App extends React.Component {
     this.destroyPlayer = this.destroyPlayer.bind(this);
 
     this.joinGameOnClick = this.joinGameOnClick.bind(this);
-    this.test = this.test.bind(this);
+    // this.test = this.test.bind(this);
   }
 
-  onComponentDidMount(){
+  componentDidMount(){
     // function to randomly place x amount of boxes
+    this.joinGameOnClick();
+    console.log("JOINED",this.state.clientID, this.state.room.toString() )
   }
   
   destroyBlock(loc){
@@ -183,17 +184,18 @@ class App extends React.Component {
     })
   }
 
-  test() {
-    console.log('click');
-    this.state.socket.emit('send test', {
-      test: 'HELL YEAH I GET IT!!! ',
-      room: this.state.room
-    });
-    this.setState({
-      test: 'HELL YEAH I GET IT!!! ' + this.state.room
-    })
-    console.log(this.state)
-  }
+  // test() {
+  //   console.log('click');
+  //   this.state.socket.emit('send test', {
+  //     test: 'HELL YEAH I GET IT!!! ',
+  //     room: this.state.room
+  //   });
+  //   this.setState({
+  //     test: 'HELL YEAH I GET IT!!! ' + this.state.room
+  //   })
+  //   console.log(this.state)
+  // }
+
   move(dir){
 
     this.state.socket.emit('action', {
@@ -201,50 +203,98 @@ class App extends React.Component {
       room: this.state.room,
       player: this.state.player
     })
+
+    // set dir first for player sprite
+    // this.setState({ 
+    //   [this.state.player]: { 
+    //     dir: dir,
+    //     x: this.state[this.state.player].x, 
+    //     y: this.state[this.state.player].y
+    //   }
+    // });
+
+    /*  
+    frame switching logic:
+
+        if dir !== current
+          frame = 1
+        else 
+          if frame === 3
+            frame -= 1 
+          else
+            frame += 1
+    */
+
       if ( dir === 'up' ){
 
           // normal move
-          this.setState({ [this.state.player]: { 
-            x: this.state[this.state.player].x, 
-            y: this.state[this.state.player].y - this.canMove(dir) } 
+          this.setState({ 
+            [this.state.player]: { 
+              frame: (( dir !== this.state[this.state.player].dir ) ? 1 : 
+                       (this.state[this.state.player].frame === 3) ? 
+                       this.state[this.state.player].frame - 1 : 
+                       this.state[this.state.player].frame + 1),
+              dir: (dir === 'spacebar') ? this.state[this.state.player].dir : dir,
+              x: this.state[this.state.player].x, 
+              y: this.state[this.state.player].y - this.canMove(dir)
+            }
           });
 
+          console.log("DIR %s : %s",dir,this.state[this.state.player].dir)
       }
 
 
       else if ( dir === 'down' ){
 
           this.setState({ [this.state.player]: { 
+            frame: (( dir !== this.state[this.state.player].dir ) ? 1 : 
+                       (this.state[this.state.player].frame === 3) ? 
+                       this.state[this.state.player].frame - 1 : 
+                       this.state[this.state.player].frame + 1),
+            dir: (dir === 'spacebar') ? this.state[this.state.player].dir : dir,
             x: this.state[this.state.player].x, 
-            y: this.state[this.state.player].y + this.canMove(dir) 
+            y: this.state[this.state.player].y + this.canMove(dir)
           } });
 
+          console.log("DIR %s : %s",dir,this.state[this.state.player].dir)
       }
 
 
       else if ( dir === 'right' ){
 
           this.setState({ [this.state.player]: { 
+            frame: (( dir !== this.state[this.state.player].dir ) ? 1 : 
+                       (this.state[this.state.player].frame === 3) ? 
+                       this.state[this.state.player].frame - 1 : 
+                       this.state[this.state.player].frame + 1),
+            dir: (dir === 'spacebar') ? this.state[this.state.player].dir : dir,
             x: this.state[this.state.player].x + this.canMove(dir), 
-            y: this.state[this.state.player].y } 
+            y: this.state[this.state.player].y }
           });
 
+          console.log("DIR %s : %s",dir,this.state[this.state.player].dir)
       }
 
 
       else if ( dir === 'left' ){
 
           this.setState({ [this.state.player]: { 
+            frame: (( dir !== this.state[this.state.player].dir ) ? 1 : 
+                       (this.state[this.state.player].frame === 3) ? 
+                       this.state[this.state.player].frame - 1 : 
+                       this.state[this.state.player].frame + 1),
+            dir: (dir === 'spacebar') ? this.state[this.state.player].dir : dir,
             x: this.state[this.state.player].x - this.canMove(dir), 
-            y: this.state[this.state.player].y } 
+            y: this.state[this.state.player].y }
           });
 
+          console.log("DIR %s : %s",dir,this.state[this.state.player].dir)
       }
 
       else if ( dir === 'spacebar' ){
         //function to center bombs
         let customFloor = (coord) => {
-          return Math.floor(coord/32) * 32;
+          return Math.floor(coord/32) * 32
         }
        
         //create new bombs/update bomb state
@@ -280,27 +330,15 @@ class App extends React.Component {
 
       }
 
+      console.log("Switched dir to ",this.state[this.state.player].dir);
   }
 
   canMove(dir){
 
-    /*
-        Go through each block and box,
-        check if we can move there or not
-        if we can move return false
-        if we cant return true
-
-        this ==> App ( this.state able )
-
-        Board size 
-        width: 288px 
-        height: 480px
-    */
-
-    let step = 5;
+    let step = 6;
     let player = $.extend({}, this.state[this.state.player]);
-    let playerWidth = 17;
-    let playerHeight = 29; 
+    let playerWidth = 20;
+    let playerHeight = 28; 
     let boxsize = 32;
 
     // first get what would be updated player coord
@@ -327,17 +365,17 @@ class App extends React.Component {
             ((player.y + playerHeight) > block.y) 
             && 
             // player top
-            (player.y < (block.y + boxsize)) 
+            (player.y < (block.y + (boxsize-10) )) 
           ){
 
-        console.log("BOX COLLISION");
+        console.log("BLOCK COLLISION ",block);
 
         let result;
         // use dir to return how the max we can move in that direction
         if ( dir === 'up' ){ 
 
           console.log( player.y +" - ("+ block.y +" + "+ boxsize +") - "+ this.state[this.state.player].y);
-          return (this.state[this.state.player].y - (block.y + boxsize)); 
+          return (this.state[this.state.player].y - (block.y + (boxsize-10))); 
         }
 
         else if ( dir === 'down' ){ 
@@ -425,13 +463,15 @@ class App extends React.Component {
                   keyValue=" "
                   onKeyHandle={ (e) => this.move('spacebar') } />
 
-     {/*Test Code*/}
+     {/*Test Code
 
 
       <button onClick={this.destroyBlock}> DestroyBlock</button>
       <button onClick={this.destroyPlayer}> DestroyPlayer</button>
-      <button onClick={this.joinGameOnClick}> Join Game Room </button>
-      <button onClick={this.test}> test </button>
+    
+      <button onClick={this.joinGameOnClick}> Join Game Room </button>*/}
+      
+      {/*Test Code <button onClick={this.test}> test </button>
 
       <div id='test'>
         {this.state.test}
@@ -440,11 +480,11 @@ class App extends React.Component {
       <div>
         <p>ClientID: {this.state.clientID}</p>
         <p>Room: {this.state.room.toString()}</p>
-      </div> 
+      </div> */}
 
-    
+      { console.log("P1 ",this.state.playerOne,"\n P2 ",this.state.playerTwo) }
 
-      <Game player={ this.state.playerOne } 
+      <Game playerOne={ this.state.playerOne } 
             playerTwo = { this.state.playerTwo }
             boxes={ this.state.boxes }
             blocks={ this.state.blocks } 
@@ -458,11 +498,11 @@ class App extends React.Component {
 ReactDOM.render(<App />, document.getElementById('app'));
 
 // Helper function
-var customFloor = function(obj){
-  obj.x = Math.floor(obj.x / 32) * 32;
-  obj.y = Math.floor(obj.y / 32) * 32;
-  return obj;
-}
+// var customFloor = function(obj){
+//   obj.x = Math.floor(obj.x / 32) * 32;
+//   obj.y = Math.floor(obj.y / 32) * 32;
+//   return obj;
+// }
 
 
 /*
