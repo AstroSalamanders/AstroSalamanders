@@ -2,8 +2,9 @@ var _ = require('underscore');
 
 var Game = function(roomid){
   this.playerOne = { x: 33, y: 33, dir: 'down', frame: 1 };
-  this.playerTwo = { x: 225, y: 417, dir: 'down' };
+  this.playerTwo = { x: 225, y: 417, dir: 'up', frame: 1 };
   this.boxes = [ { open: false, pos: { x: 64, y: 160 }} ];
+  this.bombNo = 0;
   this.bombs = [];
   this.flames = [];
   this.blocks = [  
@@ -159,76 +160,179 @@ Game.prototype.move = function(dir, player){
         y: this[player].y
       }
     } else if ( dir === 'spacebar' ){
-        //function to center bombs
+        
+        // function to center bombs
         let customFloor = (coord) => {
-          return Math.floor(coord/32) * 32;
+          return Math.round(coord/32) * 32
         }
+
+        // increase bombNo
+        this.bombNo += 1;
        
         //create new bombs/update bomb state
         let newBomb = { 
-          x: customFloor(this[player].x), 
-          y: customFloor(this[player].y),
-          frame: 1
-        };
+                        x: customFloor(this[player].x), 
+                        y: customFloor(this[player].y),
+                        frame: 1,
+                        id: this.bombNo
+                      };
 
         let currentBombs = this.bombs;
+        
         currentBombs.push(newBomb);
 
-        // update state
         this.bombs = currentBombs;
 
+        // for this this inside timeouts
+        var context = this;
 
-        /*
-
-          set interval for bomb, upon creation
-          that animates bomb until it explodes
-          remove interval on blowup function
-
-        */
-
-        var bombAnimation = function(){ 
+        // animate bomb cookup
+        var bombAnimation = function(id){
           return setInterval(function(){
             // change state on newbomb,
             // update state with currentBombs?
-            newBomb.frame = (newBomb.frame === 3) ? (1) : (newBomb.frame + 1);
-            this.bombs = currentBombs;
 
-          }, 1000);
+            // newBomb.frame = (newBomb.frame === 3) ? (3) : (newBomb.frame + 1);
+
+            // update bomb frame getting bomb with id stored in closure
+            let bombs = context.bombs.slice();
+            let bomb = bombs.find((b) => b.id === id );
+            bomb.frame = (bomb.frame === 3) ? (3) : (bomb.frame + 1);
+            context.bombs = bombs;
+
+          }, 800);
         }
 
-        var bombAnim = bombAnimation();
+        // explode bomb and remove
+        var explosion = function(id){
+          //when bomb explodes ( 3 secs ), set flames state
+          setTimeout( ()=> {
+
+            // remove animation before blowup
+            clearInterval(bombAnim);
+
+            console.log('BOOM!!!');
+
+            // 1 make a copy of the current bombs
+            let bombs = context.bombs.slice();
+
+            // 2 find our bomb
+            let bomb = bombs.find((b) => b.id === id );
+
+            // -- do flames
+            let flameTop = {x: bomb.x, y: bomb.y + 32}; 
+            let flameLeft = {x: bomb.x - 32, y: bomb.y};
+            let flameMid = {x: bomb.x, y: bomb.y};
+            let flameRight = {x: bomb.x + 32, y: bomb.y};
+            let flameBottom = {x: bomb.x, y: bomb.y - 32};
+
+            // -- set flames
+            context.flames = [flameTop, flameLeft, flameMid, flameRight, flameBottom];
+
+            // 3 if we find it, remove it
+            bombs.splice( bombs.indexOf(bomb), 1);
+
+            // 4 update bombs state
+            context.bombs = bombs;
+
+            context.flames.forEach((flame) => {
+              context.destroyBlock(flame, player, context);
+            })
+            
+            console.log('Flames state', context.flames);
+
+            // disappear flames in 1 sec
+            setTimeout( () => {
+              // this looks like it can give problems with multiple bombs
+              // blowing up at once ( altho unlikely it happens, it could )
+              context.flames = [];
+            }, 1000)
+
+
+          }, 3000)
+        }
+
+        // initiates bomb animation interval 
+        // and creates a handle to it so we can remove it
+        var bombAnim = bombAnimation(this.bombNo);
+
+        // this setTimeout function removes the interval
+        // and blows it up
+        explosion(this.bombNo);
+
+      }
+
+
+      //   //function to center bombs
+      //   let customFloor = (coord) => {
+      //     return Math.floor(coord/32) * 32;
+      //   }
+       
+      //   //create new bombs/update bomb state
+      //   let newBomb = { 
+      //     x: customFloor(this[player].x), 
+      //     y: customFloor(this[player].y),
+      //     frame: 1
+      //   };
+
+      //   let currentBombs = this.bombs;
+      //   currentBombs.push(newBomb);
+
+      //   // update state
+      //   this.bombs = currentBombs;
+
+
+      //   /*
+
+      //     set interval for bomb, upon creation
+      //     that animates bomb until it explodes
+      //     remove interval on blowup function
+
+      //   */
+
+      //   var bombAnimation = function(){ 
+      //     return setInterval(function(){
+      //       // change state on newbomb,
+      //       // update state with currentBombs?
+      //       newBomb.frame = (newBomb.frame === 3) ? (3) : (newBomb.frame + 1);
+      //       this.bombs = currentBombs;
+
+      //     }, 800);
+      //   }
+
+      //   var bombAnim = bombAnimation();
 
 
         
-        //when bomb explodes, set flames state
-        setTimeout( ()=> {
+      //   //when bomb explodes, set flames state
+      //   setTimeout( ()=> {
 
-          // remove animation before blowup
-          clearInterval( bombAnim );
+      //     // remove animation before blowup
+      //     clearInterval( bombAnim );
 
-          console.log('BOOM!!!');
-          let flameTop = {x: newBomb.x, y: newBomb.y + 32}; 
-          let flameLeft = {x: newBomb.x - 32, y: newBomb.y};
-          let flameMid = {x: newBomb.x, y: newBomb.y};
-          let flameRight = {x: newBomb.x + 32, y: newBomb.y};
-          let flameBottom = {x: newBomb.x, y: newBomb.y - 32};
+      //     console.log('BOOM!!!');
+      //     let flameTop = {x: newBomb.x, y: newBomb.y + 32}; 
+      //     let flameLeft = {x: newBomb.x - 32, y: newBomb.y};
+      //     let flameMid = {x: newBomb.x, y: newBomb.y};
+      //     let flameRight = {x: newBomb.x + 32, y: newBomb.y};
+      //     let flameBottom = {x: newBomb.x, y: newBomb.y - 32};
 
-          this.flames = [flameTop, flameLeft, flameMid, flameRight, flameBottom];
-          this.bombs = this.bombs.splice(1);
+      //     this.flames = [flameTop, flameLeft, flameMid, flameRight, flameBottom];
+      //     this.bombs = this.bombs.splice(1);
           
-          this.flames.forEach((flame) => {
-            this.destroyBlock(flame, player, this);
-          })
+      //     this.flames.forEach((flame) => {
+      //       this.destroyBlock(flame, player, this);
+      //     })
           
-          console.log('Flames state', this.flames);
+      //     console.log('Flames state', this.flames);
 
-          setTimeout( () => {
-            this.flames = [];
-          }, 1000)
+      //     setTimeout( () => {
+      //       this.flames = [];
+      //     }, 1000)
 
-        }, 3000)
+      //   }, 3000)
 
-      }
+      // }
 
 }
 

@@ -191,7 +191,7 @@ body{
   background-size: 32px 32px;
   position: absolute;
 
-  transition: background 900ms;
+  transition: background 700ms;
   transition-timing-function: linear;
 }
 
