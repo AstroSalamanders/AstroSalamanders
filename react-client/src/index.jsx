@@ -28,10 +28,39 @@ class App extends React.Component {
       player: 'playerTwo',
       playerOne: { x: 33, y: 33, dir: 'down', frame: 1 },
       playerTwo: { x: 225, y: 417, dir: 'down', frame: 1 },
-      boxes: [ { open: false, pos: { x: 64, y: 160 }} ],
       bombNo: 0,
       bombs: [],
       flames: [],
+      boxes: [ 
+              { open: false, pos: { x: 96, y: 32 }},
+              { open: false, pos: { x: 192, y: 32 }},
+              { open: false, pos: { x: 160, y: 64 }},
+              { open: false, pos: { x: 224, y: 64 }},
+              { open: false, pos: { x: 32, y: 96 }},
+              { open: false, pos: { x: 96, y: 96 }},
+              { open: false, pos: { x: 160, y: 128 }},
+              { open: false, pos: { x: 224, y: 128 }},
+              { open: false, pos: { x: 32, y: 160 }},
+              { open: false, pos: { x: 64, y: 160 }},
+              { open: false, pos: { x: 128, y: 160 }},
+              { open: false, pos: { x: 160, y: 192 }},
+              { open: false, pos: { x: 32, y: 224 }},
+              { open: false, pos: { x: 96, y: 224 }},
+              { open: false, pos: { x: 224, y: 224 }},
+              { open: false, pos: { x: 160, y: 256 }},
+              { open: false, pos: { x: 64, y: 288 }},
+              { open: false, pos: { x: 96, y: 288 }},
+              { open: false, pos: { x: 160, y: 288 }},
+              { open: false, pos: { x: 224, y: 288 }},
+              { open: false, pos: { x: 32, y: 320 }},
+              { open: false, pos: { x: 224, y: 320 }},
+              { open: false, pos: { x: 32, y: 352 }},
+              { open: false, pos: { x: 96, y: 352 }},
+              { open: false, pos: { x: 160, y: 352 }},
+              { open: false, pos: { x: 160, y: 384 }},
+              { open: false, pos: { x: 64, y: 416 }},
+              { open: false, pos: { x: 192, y: 416 }}
+             ],
       blocks: [  
                 // top edge
                 { x: 0, y: 0 },
@@ -394,7 +423,7 @@ class App extends React.Component {
     let player = $.extend({}, this.state[this.state.player]);
     let playerWidth = 20;
     let playerHeight = 28; 
-    let boxsize = 32;
+    let boxsize = 30;
 
     // first get what would be updated player coord
     if ( dir === 'up' ){ player.y -= step; }
@@ -428,13 +457,10 @@ class App extends React.Component {
         let result;
         // use dir to return how the max we can move in that direction
         if ( dir === 'up' ){ 
-
-          console.log( player.y +" - ("+ block.y +" + "+ boxsize +") - "+ this.state[this.state.player].y);
           return (this.state[this.state.player].y - (block.y + (boxsize-10))); 
         }
 
         else if ( dir === 'down' ){ 
-          console.log( (player.y + playerHeight)+" - "+ block.y);
           return block.y - (this.state[this.state.player].y + playerHeight); 
         }
 
@@ -461,23 +487,30 @@ class App extends React.Component {
             ((player.x + playerWidth) > box.pos.x)  
             &&
             // if player's left side
-            (player.x < (box.pos.x + boxsize))
+            (player.x < (box.pos.x + (boxsize-2)))
             && 
             // player bottom
             ((player.y + playerHeight) > box.pos.y) 
             && 
             // player top
-            (player.y < (box.pos.y + boxsize)) 
+            (player.y < (box.pos.y + (boxsize-4))) 
           ){
 
         console.log("BOX COLLISION");
 
         let result;
         // use dir to return how the max we can move in that direction
-        if ( dir === 'up' ){ return (this.state[this.state.player].y - (box.pos.y + boxsize)); }
-        else if ( dir === 'down' ){ return box.pos.y - (this.state[this.state.player].y + playerHeight); }
-        else if ( dir === 'right' ){ return box.pos.x - (this.state[this.state.player].x + playerWidth); }
-        else if ( dir === 'left' ){ return this.state[this.state.player].x - (box.pos.x + boxsize); }
+        if ( dir === 'up' ){ 
+          return (this.state[this.state.player].y - (box.pos.y + (boxsize-4))); }
+
+        else if ( dir === 'down' ){ 
+          return box.pos.y - (this.state[this.state.player].y + playerHeight); }
+
+        else if ( dir === 'right' ){ 
+          return box.pos.x - (this.state[this.state.player].x + playerWidth); }
+
+        else if ( dir === 'left' ){ 
+          return this.state[this.state.player].x - (box.pos.x + (boxsize-2)); }
 
       } 
 

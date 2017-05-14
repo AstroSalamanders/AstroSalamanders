@@ -72,18 +72,19 @@ body{
 /* brake */
 .box {
   /*border: 1px solid red;*/
-  z-index: 55;
+  z-index: 80;
   width: 32px;
-  height: 32px;
+  height: 34px;
   min-width: 32px;
-  min-height: 32px;
+  min-height: 34px;
   max-width: 32px;
-  max-height: 32px;
+  max-height: 34px;
 
   position: absolute;
-  background: url(./assets/box.jpg);
-  background-size: 32px 32px;
-  background-color: orange;
+  background: url(./assets/crate2.png);
+  background-size: 32px 34px;
+  transform: translateY(-2px);
+  /*background-color: orange;*/
 }
 
 /* */

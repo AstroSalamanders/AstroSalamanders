@@ -3,7 +3,36 @@ var _ = require('underscore');
 var Game = function(roomid){
   this.playerOne = { x: 33, y: 33, dir: 'down', frame: 1 };
   this.playerTwo = { x: 225, y: 417, dir: 'up', frame: 1 };
-  this.boxes = [ { open: false, pos: { x: 64, y: 160 }} ];
+  this.boxes = [ 
+              { open: false, pos: { x: 96, y: 32 }},
+              { open: false, pos: { x: 192, y: 32 }},
+              { open: false, pos: { x: 160, y: 64 }},
+              { open: false, pos: { x: 224, y: 64 }},
+              { open: false, pos: { x: 32, y: 96 }},
+              { open: false, pos: { x: 96, y: 96 }},
+              { open: false, pos: { x: 160, y: 128 }},
+              { open: false, pos: { x: 224, y: 128 }},
+              { open: false, pos: { x: 32, y: 160 }},
+              { open: false, pos: { x: 64, y: 160 }},
+              { open: false, pos: { x: 128, y: 160 }},
+              { open: false, pos: { x: 160, y: 192 }},
+              { open: false, pos: { x: 32, y: 224 }},
+              { open: false, pos: { x: 96, y: 224 }},
+              { open: false, pos: { x: 224, y: 224 }},
+              { open: false, pos: { x: 160, y: 256 }},
+              { open: false, pos: { x: 64, y: 288 }},
+              { open: false, pos: { x: 96, y: 288 }},
+              { open: false, pos: { x: 160, y: 288 }},
+              { open: false, pos: { x: 224, y: 288 }},
+              { open: false, pos: { x: 32, y: 320 }},
+              { open: false, pos: { x: 224, y: 320 }},
+              { open: false, pos: { x: 32, y: 352 }},
+              { open: false, pos: { x: 96, y: 352 }},
+              { open: false, pos: { x: 160, y: 352 }},
+              { open: false, pos: { x: 160, y: 384 }},
+              { open: false, pos: { x: 64, y: 416 }},
+              { open: false, pos: { x: 192, y: 416 }}
+            ];
   this.bombNo = 0;
   this.bombs = [];
   this.flames = [];
@@ -263,99 +292,15 @@ Game.prototype.move = function(dir, player){
       }
 
 
-      //   //function to center bombs
-      //   let customFloor = (coord) => {
-      //     return Math.floor(coord/32) * 32;
-      //   }
-       
-      //   //create new bombs/update bomb state
-      //   let newBomb = { 
-      //     x: customFloor(this[player].x), 
-      //     y: customFloor(this[player].y),
-      //     frame: 1
-      //   };
-
-      //   let currentBombs = this.bombs;
-      //   currentBombs.push(newBomb);
-
-      //   // update state
-      //   this.bombs = currentBombs;
-
-
-      //   /*
-
-      //     set interval for bomb, upon creation
-      //     that animates bomb until it explodes
-      //     remove interval on blowup function
-
-      //   */
-
-      //   var bombAnimation = function(){ 
-      //     return setInterval(function(){
-      //       // change state on newbomb,
-      //       // update state with currentBombs?
-      //       newBomb.frame = (newBomb.frame === 3) ? (3) : (newBomb.frame + 1);
-      //       this.bombs = currentBombs;
-
-      //     }, 800);
-      //   }
-
-      //   var bombAnim = bombAnimation();
-
-
-        
-      //   //when bomb explodes, set flames state
-      //   setTimeout( ()=> {
-
-      //     // remove animation before blowup
-      //     clearInterval( bombAnim );
-
-      //     console.log('BOOM!!!');
-      //     let flameTop = {x: newBomb.x, y: newBomb.y + 32}; 
-      //     let flameLeft = {x: newBomb.x - 32, y: newBomb.y};
-      //     let flameMid = {x: newBomb.x, y: newBomb.y};
-      //     let flameRight = {x: newBomb.x + 32, y: newBomb.y};
-      //     let flameBottom = {x: newBomb.x, y: newBomb.y - 32};
-
-      //     this.flames = [flameTop, flameLeft, flameMid, flameRight, flameBottom];
-      //     this.bombs = this.bombs.splice(1);
-          
-      //     this.flames.forEach((flame) => {
-      //       this.destroyBlock(flame, player, this);
-      //     })
-          
-      //     console.log('Flames state', this.flames);
-
-      //     setTimeout( () => {
-      //       this.flames = [];
-      //     }, 1000)
-
-      //   }, 3000)
-
-      // }
-
 }
 
 var canMove = function (dir, playerNumber, object){
-
-  /*
-      Go through each block and box,
-      check if we can move there or not
-      if we can move return false
-      if we cant return true
-
-      this ==> App ( this.state able )
-
-      Board size 
-      width: 288px 
-      height: 480px
-  */
 
   let step = 6;
   let player = _.extend({}, object[playerNumber]);
   let playerWidth = 20;
   let playerHeight = 28; 
-  let boxsize = 32;
+  let boxsize = 30;
 
   // first get what would be updated player coord
   if ( dir === 'up' ){ player.y -= step; }
@@ -418,23 +363,23 @@ var canMove = function (dir, playerNumber, object){
           ((player.x + playerWidth) > box.pos.x)  
           &&
           // if player's left side
-          (player.x < (box.pos.x + boxsize))
+          (player.x < (box.pos.x + (boxsize-2)))
           && 
           // player bottom
           ((player.y + playerHeight) > box.pos.y) 
           && 
           // player top
-          (player.y < (box.pos.y + boxsize)) 
+          (player.y < (box.pos.y + (boxsize-4))) 
         ){
 
       console.log("BOX COLLISION");
 
       let result;
       // use dir to return how the max we can move in that direction
-      if ( dir === 'up' ){ return (player.y - (box.pos.y + boxsize)); }
+      if ( dir === 'up' ){ return (player.y - (box.pos.y + (boxsize - 4))); }
       else if ( dir === 'down' ){ return box.pos.y - (player.y + playerHeight); }
       else if ( dir === 'right' ){ return box.pos.x - (player.x + playerWidth); }
-      else if ( dir === 'left' ){ return player.x - (box.pos.x + boxsize); }
+      else if ( dir === 'left' ){ return player.x - (box.pos.x + (boxsize-2)); }
 
     } 
 
