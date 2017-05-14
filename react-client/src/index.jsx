@@ -198,20 +198,12 @@ class App extends React.Component {
 
   move(dir){
 
+    // current way to directly send actions to server 
     this.state.socket.emit('action', {
       dir: dir,
       room: this.state.room,
       player: this.state.player
     })
-
-    // set dir first for player sprite
-    // this.setState({ 
-    //   [this.state.player]: { 
-    //     dir: dir,
-    //     x: this.state[this.state.player].x, 
-    //     y: this.state[this.state.player].y
-    //   }
-    // });
 
     /*  
     frame switching logic:
@@ -292,20 +284,55 @@ class App extends React.Component {
       }
 
       else if ( dir === 'spacebar' ){
+
         //function to center bombs
         let customFloor = (coord) => {
           return Math.floor(coord/32) * 32
         }
        
         //create new bombs/update bomb state
-        let newBomb = { x: customFloor(this.state[this.state.player].x), y: customFloor(this.state[this.state.player].y) };
+        let newBomb = { 
+                        x: customFloor(this.state[this.state.player].x), 
+                        y: customFloor(this.state[this.state.player].y),
+                        frame: 1 
+                      };
+
         let currentBombs = this.state.bombs;
+        
         currentBombs.push(newBomb);
 
         this.setState({ bombs: currentBombs });
+
+        /*
+
+          set interval for bomb, upon creation
+          that animates bomb until it explodes
+          remove interval on blowup function
+
+        */
+
+        // for this inside timeouts
+        var context = this;
+
+        var bombAnimation = function(){
+          return setInterval(function(){
+            // change state on newbomb,
+            // update state with currentBombs?
+            newBomb.frame = (newBomb.frame === 3) ? (1) : (newBomb.frame + 1);
+            context.setState({ bombs: currentBombs });
+
+          }, 1000);
+        }
+
+        var bombAnim = bombAnimation();
+
         
-        //when bomb explodes, set flames state
+        //when bomb explodes ( 3 secs ), set flames state
         setTimeout( ()=> {
+
+          // remove animation before blowup
+          clearInterval(bombAnim);
+
           console.log('BOOM!!!');
           let flameTop = {x: newBomb.x, y: newBomb.y + 32}; 
           let flameLeft = {x: newBomb.x - 32, y: newBomb.y};
@@ -313,18 +340,20 @@ class App extends React.Component {
           let flameRight = {x: newBomb.x + 32, y: newBomb.y};
           let flameBottom = {x: newBomb.x, y: newBomb.y - 32};
 
-          this.setState({ flames: [flameTop, flameLeft, flameMid, flameRight, flameBottom] })
-          this.setState({ bombs: this.state.bombs.splice(1) });
+          context.setState({ flames: [flameTop, flameLeft, flameMid, flameRight, flameBottom] })
+          context.setState({ bombs: context.state.bombs.splice(1) });
           
-          this.state.flames.forEach((flame) => {
-            this.destroyBlock(flame);
+          context.state.flames.forEach((flame) => {
+            context.destroyBlock(flame);
           })
           
-          console.log('Flames state', this.state.flames);
+          console.log('Flames state', context.state.flames);
 
+          // disappear flames in 1 sec
           setTimeout( () => {
-            this.setState({ flames: [] });
+            context.setState({ flames: [] });
           }, 1000)
+
 
         }, 3000)
 

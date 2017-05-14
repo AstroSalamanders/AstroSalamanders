@@ -165,14 +165,47 @@ Game.prototype.move = function(dir, player){
         }
        
         //create new bombs/update bomb state
-        let newBomb = { x: customFloor(this[player].x), y: customFloor(this[player].y) };
+        let newBomb = { 
+          x: customFloor(this[player].x), 
+          y: customFloor(this[player].y),
+          frame: 1
+        };
+
         let currentBombs = this.bombs;
         currentBombs.push(newBomb);
 
+        // update state
         this.bombs = currentBombs;
+
+
+        /*
+
+          set interval for bomb, upon creation
+          that animates bomb until it explodes
+          remove interval on blowup function
+
+        */
+
+        var bombAnimation = function(){ 
+          return setInterval(function(){
+            // change state on newbomb,
+            // update state with currentBombs?
+            newBomb.frame = (newBomb.frame === 3) ? (1) : (newBomb.frame + 1);
+            this.bombs = currentBombs;
+
+          }, 1000);
+        }
+
+        var bombAnim = bombAnimation();
+
+
         
         //when bomb explodes, set flames state
         setTimeout( ()=> {
+
+          // remove animation before blowup
+          clearInterval( bombAnim );
+
           console.log('BOOM!!!');
           let flameTop = {x: newBomb.x, y: newBomb.y + 32}; 
           let flameLeft = {x: newBomb.x - 32, y: newBomb.y};
