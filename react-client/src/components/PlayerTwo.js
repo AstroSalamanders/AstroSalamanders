@@ -21,7 +21,7 @@ class PlayerTwo extends React.Component{
 
     return( 
 
-        <div className="playertwo"
+        <div className={`playertwo move${this.props.pos.dir}${this.props.pos.frame}`}
              style={{ left: this.props.pos.x,
                        top: this.props.pos.y }} >
         </div>

@@ -1,6 +1,6 @@
 /* Board component ( under players, blocks, boxes ) bottom layer ( sibling on rendering container ) */
 import React from 'react';
-import Player from './Player.js';
+import PlayerOne from './Player.js';
 import PlayerTwo from './PlayerTwo.js';
 import Box from './Box.js';
 import Block from './Block.js';
@@ -37,7 +37,7 @@ class Board extends React.Component {
 
         <div id="Board">
 
-          <Player pos={ this.props.player } />
+          <PlayerOne pos={ this.props.playerOne } />
 
           <PlayerTwo pos={ this.props.playerTwo } />
 
@@ -45,7 +45,7 @@ class Board extends React.Component {
             <Flame key = {x} pos={{x: flame.x, y: flame.y}}  /> ) }
 
           { this.props.bombs.map( (bomb,x) =>
-            <Bomb key = {x} pos={{x: bomb.x, y: bomb.y}}  /> ) }
+            <Bomb key = {x} pos={{x: bomb.x, y: bomb.y, frame: bomb.frame}}  /> ) }
           
           { this.props.boxes.map( (box,x) => 
             <Box key={x} open={box.open} pos={box.pos} /> ) }

@@ -1,9 +1,39 @@
 var _ = require('underscore');
 
 var Game = function(roomid){
-  this.playerOne = {x: 33, y: 33};
-  this.playerTwo = {x: 225, y: 417};
-  this.boxes = [ { open: false, pos: { x: 64, y: 160 }} ];
+  this.playerOne = { x: 33, y: 33, dir: 'down', frame: 1 };
+  this.playerTwo = { x: 225, y: 417, dir: 'up', frame: 1 };
+  this.boxes = [ 
+              { open: false, pos: { x: 96, y: 32 }},
+              { open: false, pos: { x: 192, y: 32 }},
+              { open: false, pos: { x: 160, y: 64 }},
+              { open: false, pos: { x: 224, y: 64 }},
+              { open: false, pos: { x: 32, y: 96 }},
+              { open: false, pos: { x: 96, y: 96 }},
+              { open: false, pos: { x: 160, y: 128 }},
+              { open: false, pos: { x: 224, y: 128 }},
+              { open: false, pos: { x: 32, y: 160 }},
+              { open: false, pos: { x: 64, y: 160 }},
+              { open: false, pos: { x: 128, y: 160 }},
+              { open: false, pos: { x: 160, y: 192 }},
+              { open: false, pos: { x: 32, y: 224 }},
+              { open: false, pos: { x: 96, y: 224 }},
+              { open: false, pos: { x: 224, y: 224 }},
+              { open: false, pos: { x: 160, y: 256 }},
+              { open: false, pos: { x: 64, y: 288 }},
+              { open: false, pos: { x: 96, y: 288 }},
+              { open: false, pos: { x: 160, y: 288 }},
+              { open: false, pos: { x: 224, y: 288 }},
+              { open: false, pos: { x: 32, y: 320 }},
+              { open: false, pos: { x: 224, y: 320 }},
+              { open: false, pos: { x: 32, y: 352 }},
+              { open: false, pos: { x: 96, y: 352 }},
+              { open: false, pos: { x: 160, y: 352 }},
+              { open: false, pos: { x: 160, y: 384 }},
+              { open: false, pos: { x: 64, y: 416 }},
+              { open: false, pos: { x: 192, y: 416 }}
+            ];
+  this.bombNo = 0;
   this.bombs = [];
   this.flames = [];
   this.blocks = [  
@@ -111,87 +141,166 @@ Game.prototype.destroyPlayer = (loc, player, context) => {
 
 Game.prototype.move = function(dir, player){
 
+    // set sprite direction
+    // if (dir !== 'spacebar'){
+    //   this[player].dir = dir;
+    // }
+
+    console.log("Server Player Dir: ", this[player].dir)
     if ( dir === 'up' ){
       this[player] = {
+        frame: (( dir !== this[player].dir ) ? 1 : 
+                       (this[player].frame === 3) ? 
+                        this[player].frame - 1 : 
+                        this[player].frame + 1),
+        dir: dir,
         x: this[player].x,
         y: this[player].y - canMove(dir, player, this)
+
       }
     } else if(dir ==='down'){
       this[player] = {
+        frame: (( dir !== this[player].dir ) ? 1 : 
+                       (this[player].frame === 3) ? 
+                        this[player].frame - 1 : 
+                        this[player].frame + 1),
+        dir: dir,
         x: this[player].x,
         y: this[player].y + canMove(dir, player, this)
       }
     } else if(dir ==='right'){
       this[player] = {
+        frame: (( dir !== this[player].dir ) ? 1 : 
+                       (this[player].frame === 3) ? 
+                        this[player].frame - 1 : 
+                        this[player].frame + 1),
+        dir: dir,
         x: this[player].x + canMove(dir, player, this),
         y: this[player].y
       }
     } else if(dir ==='left'){
       this[player] = {
+        frame: (( dir !== this[player].dir ) ? 1 : 
+                       (this[player].frame === 3) ? 
+                        this[player].frame - 1 : 
+                        this[player].frame + 1),
+        dir: dir,
         x: this[player].x - canMove(dir, player, this),
         y: this[player].y
       }
     } else if ( dir === 'spacebar' ){
-        //function to center bombs
+        
+        // function to center bombs
         let customFloor = (coord) => {
-          return Math.floor(coord/32) * 32;
+          return Math.round(coord/32) * 32
         }
+
+        // increase bombNo
+        this.bombNo += 1;
        
         //create new bombs/update bomb state
-        let newBomb = { x: customFloor(this[player].x), y: customFloor(this[player].y) };
+        let newBomb = { 
+                        x: customFloor(this[player].x), 
+                        y: customFloor(this[player].y),
+                        frame: 1,
+                        id: this.bombNo
+                      };
+
         let currentBombs = this.bombs;
+        
         currentBombs.push(newBomb);
 
         this.bombs = currentBombs;
-        
-        //when bomb explodes, set flames state
-        setTimeout( ()=> {
-          console.log('BOOM!!!');
-          let flameTop = {x: newBomb.x, y: newBomb.y + 32}; 
-          let flameLeft = {x: newBomb.x - 32, y: newBomb.y};
-          let flameMid = {x: newBomb.x, y: newBomb.y};
-          let flameRight = {x: newBomb.x + 32, y: newBomb.y};
-          let flameBottom = {x: newBomb.x, y: newBomb.y - 32};
 
-          this.flames = [flameTop, flameLeft, flameMid, flameRight, flameBottom];
-          this.bombs = this.bombs.splice(1);
-          
-          this.flames.forEach((flame) => {
-            this.destroyBlock(flame, player, this);
-          })
-          
-          console.log('Flames state', this.flames);
+        // for this this inside timeouts
+        var context = this;
 
-          setTimeout( () => {
-            this.flames = [];
-          }, 1000)
+        // animate bomb cookup
+        var bombAnimation = function(id){
+          return setInterval(function(){
+            // change state on newbomb,
+            // update state with currentBombs?
 
-        }, 3000)
+            // newBomb.frame = (newBomb.frame === 3) ? (3) : (newBomb.frame + 1);
+
+            // update bomb frame getting bomb with id stored in closure
+            let bombs = context.bombs.slice();
+            let bomb = bombs.find((b) => b.id === id );
+            bomb.frame = (bomb.frame === 3) ? (3) : (bomb.frame + 1);
+            context.bombs = bombs;
+
+          }, 800);
+        }
+
+        // explode bomb and remove
+        var explosion = function(id){
+          //when bomb explodes ( 3 secs ), set flames state
+          setTimeout( ()=> {
+
+            // remove animation before blowup
+            clearInterval(bombAnim);
+
+            console.log('BOOM!!!');
+
+            // 1 make a copy of the current bombs
+            let bombs = context.bombs.slice();
+
+            // 2 find our bomb
+            let bomb = bombs.find((b) => b.id === id );
+
+            // -- do flames
+            let flameTop = {x: bomb.x, y: bomb.y + 32}; 
+            let flameLeft = {x: bomb.x - 32, y: bomb.y};
+            let flameMid = {x: bomb.x, y: bomb.y};
+            let flameRight = {x: bomb.x + 32, y: bomb.y};
+            let flameBottom = {x: bomb.x, y: bomb.y - 32};
+
+            // -- set flames
+            context.flames = [flameTop, flameLeft, flameMid, flameRight, flameBottom];
+
+            // 3 if we find it, remove it
+            bombs.splice( bombs.indexOf(bomb), 1);
+
+            // 4 update bombs state
+            context.bombs = bombs;
+
+            context.flames.forEach((flame) => {
+              context.destroyBlock(flame, player, context);
+            })
+            
+            console.log('Flames state', context.flames);
+
+            // disappear flames in 1 sec
+            setTimeout( () => {
+              // this looks like it can give problems with multiple bombs
+              // blowing up at once ( altho unlikely it happens, it could )
+              context.flames = [];
+            }, 1000)
+
+
+          }, 3000)
+        }
+
+        // initiates bomb animation interval 
+        // and creates a handle to it so we can remove it
+        var bombAnim = bombAnimation(this.bombNo);
+
+        // this setTimeout function removes the interval
+        // and blows it up
+        explosion(this.bombNo);
 
       }
+
 
 }
 
 var canMove = function (dir, playerNumber, object){
 
-  /*
-      Go through each block and box,
-      check if we can move there or not
-      if we can move return false
-      if we cant return true
-
-      this ==> App ( this.state able )
-
-      Board size 
-      width: 288px 
-      height: 480px
-  */
-
-  let step = 5;
+  let step = 6;
   let player = _.extend({}, object[playerNumber]);
-  let playerWidth = 17;
-  let playerHeight = 29; 
-  let boxsize = 32;
+  let playerWidth = 20;
+  let playerHeight = 28; 
+  let boxsize = 30;
 
   // first get what would be updated player coord
   if ( dir === 'up' ){ player.y -= step; }
@@ -217,14 +326,15 @@ var canMove = function (dir, playerNumber, object){
           ((player.y + playerHeight) > block.y) 
           && 
           // player top
-          (player.y < (block.y + boxsize)) 
+          (player.y < (block.y + (boxsize - 10))) 
         ){
 
-      console.log("BOX COLLISION");
+      console.log("BLOCK COLLISION");
 
       let result;
       // use dir to return how the max we can move in that direction
-      if ( dir === 'up' ){ return (player.y + step - (block.y + boxsize)); }
+      if ( dir === 'up' ){ 
+        return (player.y + step - (block.y + (boxsize-10))); }
 
       else if ( dir === 'down' ){ 
         return block.y - (player.y - step + playerHeight); 
@@ -253,23 +363,23 @@ var canMove = function (dir, playerNumber, object){
           ((player.x + playerWidth) > box.pos.x)  
           &&
           // if player's left side
-          (player.x < (box.pos.x + boxsize))
+          (player.x < (box.pos.x + (boxsize-2)))
           && 
           // player bottom
           ((player.y + playerHeight) > box.pos.y) 
           && 
           // player top
-          (player.y < (box.pos.y + boxsize)) 
+          (player.y < (box.pos.y + (boxsize-4))) 
         ){
 
       console.log("BOX COLLISION");
 
       let result;
       // use dir to return how the max we can move in that direction
-      if ( dir === 'up' ){ return (player.y - (box.pos.y + boxsize)); }
+      if ( dir === 'up' ){ return (player.y - (box.pos.y + (boxsize - 4))); }
       else if ( dir === 'down' ){ return box.pos.y - (player.y + playerHeight); }
       else if ( dir === 'right' ){ return box.pos.x - (player.x + playerWidth); }
-      else if ( dir === 'left' ){ return player.x - (box.pos.x + boxsize); }
+      else if ( dir === 'left' ){ return player.x - (box.pos.x + (boxsize-2)); }
 
     } 
 

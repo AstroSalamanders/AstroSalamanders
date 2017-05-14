@@ -26,11 +26,41 @@ class App extends React.Component {
          Since the blocks won't change, they could be a state of the board component itself
       */
       player: 'playerTwo',
-      playerOne: { x: 33, y: 33 },
-      playerTwo: { x: 225, y: 417 },
-      boxes: [ { open: false, pos: { x: 64, y: 160 }} ],
+      playerOne: { x: 33, y: 33, dir: 'down', frame: 1 },
+      playerTwo: { x: 225, y: 417, dir: 'down', frame: 1 },
+      bombNo: 0,
       bombs: [],
       flames: [],
+      boxes: [ 
+              { open: false, pos: { x: 96, y: 32 }},
+              { open: false, pos: { x: 192, y: 32 }},
+              { open: false, pos: { x: 160, y: 64 }},
+              { open: false, pos: { x: 224, y: 64 }},
+              { open: false, pos: { x: 32, y: 96 }},
+              { open: false, pos: { x: 96, y: 96 }},
+              { open: false, pos: { x: 160, y: 128 }},
+              { open: false, pos: { x: 224, y: 128 }},
+              { open: false, pos: { x: 32, y: 160 }},
+              { open: false, pos: { x: 64, y: 160 }},
+              { open: false, pos: { x: 128, y: 160 }},
+              { open: false, pos: { x: 160, y: 192 }},
+              { open: false, pos: { x: 32, y: 224 }},
+              { open: false, pos: { x: 96, y: 224 }},
+              { open: false, pos: { x: 224, y: 224 }},
+              { open: false, pos: { x: 160, y: 256 }},
+              { open: false, pos: { x: 64, y: 288 }},
+              { open: false, pos: { x: 96, y: 288 }},
+              { open: false, pos: { x: 160, y: 288 }},
+              { open: false, pos: { x: 224, y: 288 }},
+              { open: false, pos: { x: 32, y: 320 }},
+              { open: false, pos: { x: 224, y: 320 }},
+              { open: false, pos: { x: 32, y: 352 }},
+              { open: false, pos: { x: 96, y: 352 }},
+              { open: false, pos: { x: 160, y: 352 }},
+              { open: false, pos: { x: 160, y: 384 }},
+              { open: false, pos: { x: 64, y: 416 }},
+              { open: false, pos: { x: 192, y: 416 }}
+             ],
       blocks: [  
                 // top edge
                 { x: 0, y: 0 },
@@ -83,7 +113,6 @@ class App extends React.Component {
                 { x: 0, y: 352 },
                 { x: 0, y: 384 },
                 { x: 0, y: 416 },
-                { x: 0, y: 448 },
 
                 // inside blocks
                 { x: 64, y: 64},
@@ -113,11 +142,13 @@ class App extends React.Component {
     this.destroyPlayer = this.destroyPlayer.bind(this);
 
     this.joinGameOnClick = this.joinGameOnClick.bind(this);
-    this.test = this.test.bind(this);
+    // this.test = this.test.bind(this);
   }
 
-  onComponentDidMount(){
+  componentDidMount(){
     // function to randomly place x amount of boxes
+    this.joinGameOnClick();
+    console.log("JOINED",this.state.clientID, this.state.room.toString() )
   }
   
   destroyBlock(loc){
@@ -183,100 +214,204 @@ class App extends React.Component {
     })
   }
 
-  test() {
-    console.log('click');
-    this.state.socket.emit('send test', {
-      test: 'HELL YEAH I GET IT!!! ',
-      room: this.state.room
-    });
-    this.setState({
-      test: 'HELL YEAH I GET IT!!! ' + this.state.room
-    })
-    console.log(this.state)
-  }
+  // test() {
+  //   console.log('click');
+  //   this.state.socket.emit('send test', {
+  //     test: 'HELL YEAH I GET IT!!! ',
+  //     room: this.state.room
+  //   });
+  //   this.setState({
+  //     test: 'HELL YEAH I GET IT!!! ' + this.state.room
+  //   })
+  //   console.log(this.state)
+  // }
+
   move(dir){
 
+    // current way to directly send actions to server 
     this.state.socket.emit('action', {
       dir: dir,
       room: this.state.room,
       player: this.state.player
     })
+
+    /*  
+    frame switching logic:
+
+        if dir !== current
+          frame = 1
+        else 
+          if frame === 3
+            frame -= 1 
+          else
+            frame += 1
+    */
+
       if ( dir === 'up' ){
 
           // normal move
-          this.setState({ [this.state.player]: { 
-            x: this.state[this.state.player].x, 
-            y: this.state[this.state.player].y - this.canMove(dir) } 
+          this.setState({ 
+            [this.state.player]: { 
+              frame: (( dir !== this.state[this.state.player].dir ) ? 1 : 
+                       (this.state[this.state.player].frame === 3) ? 
+                       this.state[this.state.player].frame - 1 : 
+                       this.state[this.state.player].frame + 1),
+              dir: (dir === 'spacebar') ? this.state[this.state.player].dir : dir,
+              x: this.state[this.state.player].x, 
+              y: this.state[this.state.player].y - this.canMove(dir)
+            }
           });
 
+          console.log("DIR %s : %s",dir,this.state[this.state.player].dir)
       }
 
 
       else if ( dir === 'down' ){
 
           this.setState({ [this.state.player]: { 
+            frame: (( dir !== this.state[this.state.player].dir ) ? 1 : 
+                       (this.state[this.state.player].frame === 3) ? 
+                       this.state[this.state.player].frame - 1 : 
+                       this.state[this.state.player].frame + 1),
+            dir: (dir === 'spacebar') ? this.state[this.state.player].dir : dir,
             x: this.state[this.state.player].x, 
-            y: this.state[this.state.player].y + this.canMove(dir) 
+            y: this.state[this.state.player].y + this.canMove(dir)
           } });
 
+          console.log("DIR %s : %s",dir,this.state[this.state.player].dir)
       }
 
 
       else if ( dir === 'right' ){
 
           this.setState({ [this.state.player]: { 
+            frame: (( dir !== this.state[this.state.player].dir ) ? 1 : 
+                       (this.state[this.state.player].frame === 3) ? 
+                       this.state[this.state.player].frame - 1 : 
+                       this.state[this.state.player].frame + 1),
+            dir: (dir === 'spacebar') ? this.state[this.state.player].dir : dir,
             x: this.state[this.state.player].x + this.canMove(dir), 
-            y: this.state[this.state.player].y } 
+            y: this.state[this.state.player].y }
           });
 
+          console.log("DIR %s : %s",dir,this.state[this.state.player].dir)
       }
 
 
       else if ( dir === 'left' ){
 
           this.setState({ [this.state.player]: { 
+            frame: (( dir !== this.state[this.state.player].dir ) ? 1 : 
+                       (this.state[this.state.player].frame === 3) ? 
+                       this.state[this.state.player].frame - 1 : 
+                       this.state[this.state.player].frame + 1),
+            dir: (dir === 'spacebar') ? this.state[this.state.player].dir : dir,
             x: this.state[this.state.player].x - this.canMove(dir), 
-            y: this.state[this.state.player].y } 
+            y: this.state[this.state.player].y }
           });
 
+          console.log("DIR %s : %s",dir,this.state[this.state.player].dir)
       }
 
       else if ( dir === 'spacebar' ){
-        //function to center bombs
+
+        // function to center bombs
         let customFloor = (coord) => {
-          return Math.floor(coord/32) * 32;
+          return Math.round(coord/32) * 32
         }
+
+        // increase bombNo
+        this.setState({ bombNo: (this.state.bombNo + 1) });
        
         //create new bombs/update bomb state
-        let newBomb = { x: customFloor(this.state[this.state.player].x), y: customFloor(this.state[this.state.player].y) };
+        let newBomb = { 
+                        x: customFloor(this.state[this.state.player].x), 
+                        y: customFloor(this.state[this.state.player].y),
+                        frame: 1,
+                        id: this.state.bombNo
+                      };
+
         let currentBombs = this.state.bombs;
+        
         currentBombs.push(newBomb);
 
         this.setState({ bombs: currentBombs });
-        
-        //when bomb explodes, set flames state
-        setTimeout( ()=> {
-          console.log('BOOM!!!');
-          let flameTop = {x: newBomb.x, y: newBomb.y + 32}; 
-          let flameLeft = {x: newBomb.x - 32, y: newBomb.y};
-          let flameMid = {x: newBomb.x, y: newBomb.y};
-          let flameRight = {x: newBomb.x + 32, y: newBomb.y};
-          let flameBottom = {x: newBomb.x, y: newBomb.y - 32};
 
-          this.setState({ flames: [flameTop, flameLeft, flameMid, flameRight, flameBottom] })
-          this.setState({ bombs: this.state.bombs.splice(1) });
-          
-          this.state.flames.forEach((flame) => {
-            this.destroyBlock(flame);
-          })
-          
-          console.log('Flames state', this.state.flames);
+        // for this this inside timeouts
+        var context = this;
 
-          setTimeout( () => {
-            this.setState({ flames: [] });
-          }, 1000)
+        // animate bomb cookup
+        var bombAnimation = function(id){
+          return setInterval(function(){
+            // change state on newbomb,
+            // update state with currentBombs?
 
-        }, 3000)
+            // newBomb.frame = (newBomb.frame === 3) ? (3) : (newBomb.frame + 1);
+
+            // update bomb frame getting bomb with id stored in closure
+            let bombs = context.state.bombs.slice();
+            let bomb = bombs.find((b) => b.id === id );
+            bomb.frame = (bomb.frame === 3) ? (3) : (bomb.frame + 1);
+            context.setState({ bombs: bombs });
+
+          }, 800);
+        }
+
+        // explode bomb and remove
+        var explosion = function(id){
+          //when bomb explodes ( 3 secs ), set flames state
+          setTimeout( ()=> {
+
+            // remove animation before blowup
+            clearInterval(bombAnim);
+
+            console.log('BOOM!!!');
+
+            // 1 make a copy of the current bombs
+            let bombs = context.state.bombs.slice();
+
+            // 2 find our bomb
+            let bomb = bombs.find((b) => b.id === id );
+
+            // -- do flames
+            let flameTop = {x: bomb.x, y: bomb.y + 32}; 
+            let flameLeft = {x: bomb.x - 32, y: bomb.y};
+            let flameMid = {x: bomb.x, y: bomb.y};
+            let flameRight = {x: bomb.x + 32, y: bomb.y};
+            let flameBottom = {x: bomb.x, y: bomb.y - 32};
+
+            // -- set flames
+            context.setState({ flames: [flameTop, flameLeft, flameMid, flameRight, flameBottom] })
+
+            // 3 remove it
+            bombs.splice( bombs.indexOf(bomb), 1);
+
+            // 4 update state
+            context.setState({ bombs: bombs });
+
+
+            context.state.flames.forEach((flame) => {
+              context.destroyBlock(flame);
+            })
+            
+            console.log('Flames state', context.state.flames);
+
+            // disappear flames in 1 sec
+            setTimeout( () => {
+              context.setState({ flames: [] });
+            }, 1000)
+
+
+          }, 3000)
+        }
+
+        // initiates bomb animation interval 
+        // and creates a handle to it so we can remove it
+        var bombAnim = bombAnimation(this.state.bombNo);
+
+        // this setTimeout function removes the interval
+        // and blows it up
+        explosion(this.state.bombNo);
 
       }
 
@@ -284,24 +419,11 @@ class App extends React.Component {
 
   canMove(dir){
 
-    /*
-        Go through each block and box,
-        check if we can move there or not
-        if we can move return false
-        if we cant return true
-
-        this ==> App ( this.state able )
-
-        Board size 
-        width: 288px 
-        height: 480px
-    */
-
-    let step = 5;
+    let step = 6;
     let player = $.extend({}, this.state[this.state.player]);
-    let playerWidth = 17;
-    let playerHeight = 29; 
-    let boxsize = 32;
+    let playerWidth = 20;
+    let playerHeight = 28; 
+    let boxsize = 30;
 
     // first get what would be updated player coord
     if ( dir === 'up' ){ player.y -= step; }
@@ -327,21 +449,18 @@ class App extends React.Component {
             ((player.y + playerHeight) > block.y) 
             && 
             // player top
-            (player.y < (block.y + boxsize)) 
+            (player.y < (block.y + (boxsize-10) )) 
           ){
 
-        console.log("BOX COLLISION");
+        console.log("BLOCK COLLISION ",block);
 
         let result;
         // use dir to return how the max we can move in that direction
         if ( dir === 'up' ){ 
-
-          console.log( player.y +" - ("+ block.y +" + "+ boxsize +") - "+ this.state[this.state.player].y);
-          return (this.state[this.state.player].y - (block.y + boxsize)); 
+          return (this.state[this.state.player].y - (block.y + (boxsize-10))); 
         }
 
         else if ( dir === 'down' ){ 
-          console.log( (player.y + playerHeight)+" - "+ block.y);
           return block.y - (this.state[this.state.player].y + playerHeight); 
         }
 
@@ -368,23 +487,30 @@ class App extends React.Component {
             ((player.x + playerWidth) > box.pos.x)  
             &&
             // if player's left side
-            (player.x < (box.pos.x + boxsize))
+            (player.x < (box.pos.x + (boxsize-2)))
             && 
             // player bottom
             ((player.y + playerHeight) > box.pos.y) 
             && 
             // player top
-            (player.y < (box.pos.y + boxsize)) 
+            (player.y < (box.pos.y + (boxsize-4))) 
           ){
 
         console.log("BOX COLLISION");
 
         let result;
         // use dir to return how the max we can move in that direction
-        if ( dir === 'up' ){ return (this.state[this.state.player].y - (box.pos.y + boxsize)); }
-        else if ( dir === 'down' ){ return box.pos.y - (this.state[this.state.player].y + playerHeight); }
-        else if ( dir === 'right' ){ return box.pos.x - (this.state[this.state.player].x + playerWidth); }
-        else if ( dir === 'left' ){ return this.state[this.state.player].x - (box.pos.x + boxsize); }
+        if ( dir === 'up' ){ 
+          return (this.state[this.state.player].y - (box.pos.y + (boxsize-4))); }
+
+        else if ( dir === 'down' ){ 
+          return box.pos.y - (this.state[this.state.player].y + playerHeight); }
+
+        else if ( dir === 'right' ){ 
+          return box.pos.x - (this.state[this.state.player].x + playerWidth); }
+
+        else if ( dir === 'left' ){ 
+          return this.state[this.state.player].x - (box.pos.x + (boxsize-2)); }
 
       } 
 
@@ -425,13 +551,15 @@ class App extends React.Component {
                   keyValue=" "
                   onKeyHandle={ (e) => this.move('spacebar') } />
 
-     {/*Test Code*/}
+     {/*Test Code
 
 
       <button onClick={this.destroyBlock}> DestroyBlock</button>
       <button onClick={this.destroyPlayer}> DestroyPlayer</button>
-      <button onClick={this.joinGameOnClick}> Join Game Room </button>
-      <button onClick={this.test}> test </button>
+    
+      <button onClick={this.joinGameOnClick}> Join Game Room </button>*/}
+      
+      {/*Test Code <button onClick={this.test}> test </button>
 
       <div id='test'>
         {this.state.test}
@@ -440,11 +568,11 @@ class App extends React.Component {
       <div>
         <p>ClientID: {this.state.clientID}</p>
         <p>Room: {this.state.room.toString()}</p>
-      </div> 
+      </div> */}
 
-    
+      { console.log("P1 ",this.state.playerOne,"\n P2 ",this.state.playerTwo) }
 
-      <Game player={ this.state.playerOne } 
+      <Game playerOne={ this.state.playerOne } 
             playerTwo = { this.state.playerTwo }
             boxes={ this.state.boxes }
             blocks={ this.state.blocks } 
@@ -458,11 +586,11 @@ class App extends React.Component {
 ReactDOM.render(<App />, document.getElementById('app'));
 
 // Helper function
-var customFloor = function(obj){
-  obj.x = Math.floor(obj.x / 32) * 32;
-  obj.y = Math.floor(obj.y / 32) * 32;
-  return obj;
-}
+// var customFloor = function(obj){
+//   obj.x = Math.floor(obj.x / 32) * 32;
+//   obj.y = Math.floor(obj.y / 32) * 32;
+//   return obj;
+// }
 
 
 /*
