@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 var syncGames = function(client){
   for(var room in games){
-      client.in(room).broadcast.emit('update', games[room])
+      client.in(room).broadcast.emit('update', games[room]);
     }
 }
 
@@ -63,6 +63,9 @@ sio.sockets.on('connection', (client) => {
   //Useful to know when someone connects
   console.log('\t socket.io:: player ' + client.userid + ' connected');
   
+  
+  
+
   //When this client disconnects
   client.on('disconnect', (test) => {
     //Useful to know when someone disconnects
@@ -136,7 +139,9 @@ sio.sockets.on('connection', (client) => {
 
   }); //client.on disconnect
   
-
+  client.on('hard_disconnect', () => {
+      client.disconnect();
+    });
 
   client.on('join', () => {
     var room;
@@ -183,8 +188,10 @@ sio.sockets.on('connection', (client) => {
     
     let pNum ;
     console.log(client.adapter.rooms[roomList.tail.val].length+" players in room")
+    
     if (client.adapter.rooms[roomList.tail.val].length <= 1){
       
+      console.log("LENGTH <= 1 : ",client.adapter.rooms[roomList.tail.val].length)
       if (games[room].playerOne.alive === true ){
         console.log("PlayerOne is alive ");
         pNum = 2;
@@ -193,11 +200,12 @@ sio.sockets.on('connection', (client) => {
         pNum = 1;
       } else {
         console.log("Neither alive?", games[room].playerOne.alive, games[room].playerTwo.alive)
+        pNum = 1;
       }
 
     } else {
-      console.log("Asigning 1 because length != ")
-      pNum = 1;
+      console.log("Asigning 1 because length is ",client.adapter.rooms[roomList.tail.val].length )
+      pNum = 2;
     }
 
     console.log("PNUM IS",pNum);

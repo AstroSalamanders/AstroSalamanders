@@ -196,8 +196,12 @@ Game.prototype.destroyPlayer = (loc, context) => {
 
         console.log("TIMEOUT RESET")
         context.page = 'landing';
-        
-        // context.reset();
+
+        // [ context.playerOne, context.playerTwo ].forEach( player => {
+
+        // })
+
+        context.reset();
 
       }, 3000);
     }

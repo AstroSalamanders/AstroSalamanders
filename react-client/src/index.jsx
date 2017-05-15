@@ -16,12 +16,13 @@ class App extends React.Component {
 
   constructor(props) {
     super(props);
+
     this.state = {
       test: '',
       socket: () => {},
       clientID: '',
       room: '',
-      page: 'button',
+      page: 'landing',
       /* 
          the state of the app should live in the outmost component
          and be passed down through props.
@@ -236,12 +237,14 @@ class App extends React.Component {
 
   joinGameOnClick () {
 
+    var context = this;
     var socket = io.connect('/');
 
     socket.on('onconnected', (data) => {
       console.log('connected successfuly to the socket.io server. My server side ID is ', data.id);
       socket.emit('join');
     });
+
 
     socket.on('room info', ({clientID, room, adapter, playerNumber}) => {
 
@@ -250,13 +253,17 @@ class App extends React.Component {
       console.log("adapter: ", adapter); 
       console.log("player number:", playerNumber);
 
-      this.setState({
-        socket: socket,
-        clientID: clientID,
-        room: room
-      })
+      // this.setState({
+      //   socket: socket,
+      //   clientID: clientID,
+      //   room: room
+      // })
 
-      if(this.state.clientID === clientID){
+      context.socket = socket;
+      context.clientID= clientID;
+      context.room = room;
+
+      if(context.clientID === clientID){
         var player = playerNumber === 1 ? 'playerOne' : 'playerTwo'
         this.setState({ player: player });
         this.setState({ [this.state.player]: {  
@@ -303,9 +310,9 @@ class App extends React.Component {
     console.log("MOVING",dir);
 
     // current way to directly send actions to server 
-    this.state.socket.emit('action', {
+    this.socket.emit('action', {
       dir: dir,
-      room: this.state.room,
+      room: this.room,
       player: this.state.player
     });
 
@@ -697,7 +704,10 @@ class App extends React.Component {
                 bombs={ this.state.bombs }/> 
           : 
             
-            <Landing joinGameOnClick={this.joinGameOnClick}/>
+            <Landing player={ this.state.player }
+                     room={ this.room }
+                     socket={ this.socket } 
+                     joinGameOnClick={this.joinGameOnClick}/>
       }
 
     </div>)
