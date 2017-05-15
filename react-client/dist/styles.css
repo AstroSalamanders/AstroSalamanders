@@ -1,8 +1,10 @@
-body{
+body {
   /*outline: 1px solid green;
   background-color: green;*/
 }
-
+html, #app {
+  background-color: #726658;
+}
 .alivetrue {
   display: block;
 }
@@ -286,3 +288,12 @@ button.btn:focus, button.btn:active {
     background-repeat: no-repeat;
     background-position: 2px 2px;
 }
+
+#Landing {
+  background-color: #726658;
+  margin-top: 40%;
+}
+
+
+
+
