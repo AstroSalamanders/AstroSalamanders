@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import KeyHandler, { KEYDOWN, KEYUP } from 'react-key-handler';
 import $ from 'jquery';
 import Game from './components/Game.js';
+import Landing from './components/Landing.js';
 import PlayerTwo from './components/PlayerTwo.js';
 // import { Swipeable, Holdable, defineHold, holdProgress, defineSwipe } from 'react-touch';
 // import Touchscreen from './components/Touchscreen.js';
@@ -155,11 +156,6 @@ class App extends React.Component {
   }
 
   componentDidMount(){
-    // if (this.state.page === 'button') {
-    //   this.setState({
-    //     page: <button onClick={this.joinGameOnClick}> Join Game Room </button>
-    //   })
-    // }
     // this.joinGameOnClick();
     // console.log("JOINED",this.state.clientID, this.state.room.toString() )
   }
@@ -678,14 +674,16 @@ class App extends React.Component {
 
       <Controls move={ this.move }/>
 
-      { (this.state.page === 'game' ) ?  <Game playerOne={ this.state.playerOne } 
+      { (this.state.page === 'game' ) ?  
+            <Game playerOne={ this.state.playerOne } 
             playerTwo = { this.state.playerTwo }
             boxes={ this.state.boxes }
             blocks={ this.state.blocks } 
             flames={ this.state.flames }
             bombs={ this.state.bombs }/> 
             : 
-            <button onClick={this.joinGameOnClick}> Join Game Room </button>}
+            <Landing joinGameOnClick={this.joinGameOnClick}/>
+      }
 
     </div>)
   }
