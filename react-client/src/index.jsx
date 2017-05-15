@@ -20,7 +20,7 @@ class App extends React.Component {
       socket: () => {},
       clientID: '',
       room: '',
-
+      page: 'button',
       /* 
          the state of the app should live in the outmost component
          and be passed down through props.
@@ -155,9 +155,13 @@ class App extends React.Component {
   }
 
   componentDidMount(){
-    
-    this.joinGameOnClick();
-    console.log("JOINED",this.state.clientID, this.state.room.toString() )
+    // if (this.state.page === 'button') {
+    //   this.setState({
+    //     page: <button onClick={this.joinGameOnClick}> Join Game Room </button>
+    //   })
+    // }
+    // this.joinGameOnClick();
+    // console.log("JOINED",this.state.clientID, this.state.room.toString() )
   }
   
   destroyBlock(loc){
@@ -266,8 +270,10 @@ class App extends React.Component {
             frame: 1, 
             alive: true 
           }
-      });
-
+        });
+        this.setState({
+          page: 'game'
+        })
       }
     });
 
@@ -672,12 +678,14 @@ class App extends React.Component {
 
       <Controls move={ this.move }/>
 
-      <Game playerOne={ this.state.playerOne } 
+      { (this.state.page === 'game' ) ?  <Game playerOne={ this.state.playerOne } 
             playerTwo = { this.state.playerTwo }
             boxes={ this.state.boxes }
             blocks={ this.state.blocks } 
             flames={ this.state.flames }
-            bombs={ this.state.bombs }/>
+            bombs={ this.state.bombs }/> 
+            : 
+            <button onClick={this.joinGameOnClick}> Join Game Room </button>}
 
     </div>)
   }
