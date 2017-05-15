@@ -1,7 +1,7 @@
 var _ = require('underscore');
 
 var Game = function(roomid){
-  this.playerOne = { x: 225, y: 417, dir: 'down', frame: 1, alive:true };
+  this.playerOne = { x: 33, y: 33, dir: 'down', frame: 1, alive:true };
   this.playerTwo = { x: 225, y: 417, dir: 'up', frame: 1, alive: true };
   this.boxes = [ 
     { open: false, pos: { x: 96, y: 32 }},
@@ -320,7 +320,7 @@ Game.prototype.move = function(dir, player){
 }
 
 Game.prototype.reset = function(context){
-  this.playerOne = { x: 225, y: 417, dir: 'down', frame: 1, alive: true };
+  this.playerOne = { x: 33, y: 33, dir: 'down', frame: 1, alive: true };
   this.playerTwo = { x: 225, y: 417, dir: 'up', frame: 1, alive: true };
   this.boxes = [ 
               { open: false, pos: { x: 96, y: 32 }},
