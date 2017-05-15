@@ -126,12 +126,39 @@ Game.prototype.destroyBlock = (loc, player, context) => {
     //console.log(newBoxesArray)
     context.boxes = newBoxesArray;
     // console.log(context)
-    context.destroyPlayer(loc, context)
+    
+    // IF PLAYER IN POS, KILL PLAYER
+    let playerWidth = 20;
+    let playerHeight = 28;
+    let bombsize = 32;
+
+    [ context.playerOne, context.playerTwo ].forEach(
+        function(player){ 
+
+          if ( 
+            // if player's right side
+            ((player.x + playerWidth) > loc.x)  
+            &&
+            // if player's left side
+            (player.x < (loc.x + bombsize))
+            && 
+            // player bottom
+            ((player.y + playerHeight) > loc.y) 
+            && 
+            // player top
+            (player.y < (loc.y + (bombsize - 10))) 
+          ){  
+              console.log("Destroy player!",loc)
+              context.destroyPlayer(loc, context);
+          }
+        });
+    
   }
 
 Game.prototype.destroyPlayer = (loc, context) => {
     // Takes target tile, currently checks if player is standing in destruction tile.
     console.log('before ',context.playerOne.alive, context.playerTwo.alive, context.winner)
+
     var playerOneRect = {x: context.playerOne.x, y: context.playerOne.y, width: 17, height: 25}
     var playerTwoRect = {x: context.playerTwo.x, y: context.playerTwo.y, width: 17, height: 25}
     var destructRect = {x: loc.x, y:loc.y, width: 32, height: 30}
@@ -161,13 +188,16 @@ Game.prototype.destroyPlayer = (loc, context) => {
     }
 
     if (context.winner){
+
       // 1 REMOVE PLAYER
       console.log("WINNER! ",context.winner)
       // 2 SET TIMEOUT TO A FEW SECS AND reset
       setTimeout(function(){
 
+        console.log("TIMEOUT RESET")
         context.page = 'landing';
-        context.reset();
+        
+        // context.reset();
 
       }, 3000);
     }

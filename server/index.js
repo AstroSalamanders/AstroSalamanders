@@ -15,6 +15,12 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname + '/../react-client/dist'));
 app.use(bodyParser.urlencoded({extended: true}));
 
+var syncGames = function(client){
+  for(var room in games){
+      client.in(room).broadcast.emit('update', games[room])
+    }
+}
+
 /*
   put express ajax route here
 */
@@ -91,7 +97,7 @@ sio.sockets.on('connection', (client) => {
         console.log("NOT DISCONECTING PLAYER")
       }
 
-    console.log(" ANY ROOMS? ",client)
+    // console.log(" ANY ROOMS? ",client)
     //here we handle the room arrangement after player left
     if (client.adapter.rooms) {
 
@@ -175,12 +181,32 @@ sio.sockets.on('connection', (client) => {
 
     // set player alive
     
+    let pNum ;
+    console.log(client.adapter.rooms[roomList.tail.val].length+" players in room")
+    if (client.adapter.rooms[roomList.tail.val].length <= 1){
+      
+      if (games[room].playerOne.alive === true ){
+        console.log("PlayerOne is alive ");
+        pNum = 2;
+      } else if (games[room].playerTwo.alive === true){
+        console.log("PlayerTwo is alive ");
+        pNum = 1;
+      } else {
+        console.log("Neither alive?", games[room].playerOne.alive, games[room].playerTwo.alive)
+      }
+
+    } else {
+      console.log("Asigning 1 because length != ")
+      pNum = 1;
+    }
+
+    console.log("PNUM IS",pNum);
 
     client.emit('room info', {
       clientID: Object.keys(client.rooms)[0],
       room: room,
       adapter: client.adapter.rooms,
-      playerNumber: (client.adapter.rooms[roomList.tail.val].length === 1) ? (games[room].playerOne.alive ? 2 : 1 ) : 1
+      playerNumber: pNum
     });
 
     let player = (client.adapter.rooms[roomList.tail.val].length === 1) ? 'playerOne' : 'playerTwo';
@@ -208,9 +234,7 @@ sio.sockets.on('connection', (client) => {
   })
 
   setInterval(function(){
-    for(var room in games){
-      client.in(room).broadcast.emit('update', games[room])
-    }
+    syncGames(client);
   }, updateInterval)
 
 }); //sio.sockets.on connection

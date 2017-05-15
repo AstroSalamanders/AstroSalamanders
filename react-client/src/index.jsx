@@ -279,8 +279,9 @@ class App extends React.Component {
       })
     });
 
-    socket.on('update', (gameState)=>{
+    socket.on('update', (gameState) => {
       //console.log(gameState.playerOne)
+      // console.log("UPDATING GAME")
       this.setState(gameState)
     })
   }
@@ -670,18 +671,32 @@ class App extends React.Component {
 
       {/* <Touchscreen move={ this.move } /> */}
 
-      { this.state.winner ? <h1 className="winner">{ this.state.winner.toUpperCase() } { this.state.winner === 'draw' ? '!' : 'WINS!' }</h1> : null }
+      { 
+
+        this.state.winner ? 
+
+        <h1 className="winner">
+          { this.state.winner.toUpperCase() } { this.state.winner === 'draw' ? '!' : 'WINS!' }
+        </h1> 
+
+        : null 
+
+      }
 
       <Controls move={ this.move }/>
 
-      { (this.state.page === 'game' ) ?  
-            <Game playerOne={ this.state.playerOne } 
-            playerTwo = { this.state.playerTwo }
-            boxes={ this.state.boxes }
-            blocks={ this.state.blocks } 
-            flames={ this.state.flames }
-            bombs={ this.state.bombs }/> 
-            : 
+      { 
+
+        (this.state.page === 'game' ) ?  
+
+          <Game playerOne={ this.state.playerOne } 
+                playerTwo = { this.state.playerTwo }
+                boxes={ this.state.boxes }
+                blocks={ this.state.blocks } 
+                flames={ this.state.flames }
+                bombs={ this.state.bombs }/> 
+          : 
+            
             <Landing joinGameOnClick={this.joinGameOnClick}/>
       }
 
