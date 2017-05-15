@@ -26,6 +26,7 @@ class Game extends React.Component {
   render(){
     return( 
         <div id="Game">
+        
           <Board playerOne={ this.props.playerOne }
                  playerTwo = { this.props.playerTwo }
                  boxes={ this.props.boxes }
