@@ -4,34 +4,34 @@ var Game = function(roomid){
   this.playerOne = { x: 33, y: 33, dir: 'down', frame: 1, alive:true };
   this.playerTwo = { x: 225, y: 417, dir: 'up', frame: 1, alive: true };
   this.boxes = [ 
-    { open: false, pos: { x: 96, y: 32 }},
-    { open: false, pos: { x: 192, y: 32 }},
-    { open: false, pos: { x: 160, y: 64 }},
-    { open: false, pos: { x: 224, y: 64 }},
-    { open: false, pos: { x: 32, y: 96 }},
-    { open: false, pos: { x: 96, y: 96 }},
-    { open: false, pos: { x: 160, y: 128 }},
-    { open: false, pos: { x: 224, y: 128 }},
-    { open: false, pos: { x: 32, y: 160 }},
-    { open: false, pos: { x: 64, y: 160 }},
-    { open: false, pos: { x: 128, y: 160 }},
-    { open: false, pos: { x: 160, y: 192 }},
-    { open: false, pos: { x: 32, y: 224 }},
-    { open: false, pos: { x: 96, y: 224 }},
-    { open: false, pos: { x: 224, y: 224 }},
-    { open: false, pos: { x: 160, y: 256 }},
-    { open: false, pos: { x: 64, y: 288 }},
-    { open: false, pos: { x: 96, y: 288 }},
-    { open: false, pos: { x: 160, y: 288 }},
-    { open: false, pos: { x: 224, y: 288 }},
-    { open: false, pos: { x: 32, y: 320 }},
-    { open: false, pos: { x: 224, y: 320 }},
-    { open: false, pos: { x: 32, y: 352 }},
-    { open: false, pos: { x: 96, y: 352 }},
-    { open: false, pos: { x: 160, y: 352 }},
-    { open: false, pos: { x: 160, y: 384 }},
-    { open: false, pos: { x: 64, y: 416 }},
-    { open: false, pos: { x: 192, y: 416 }}
+    // { open: false, pos: { x: 96, y: 32 }},
+    // { open: false, pos: { x: 192, y: 32 }},
+    // { open: false, pos: { x: 160, y: 64 }},
+    // { open: false, pos: { x: 224, y: 64 }},
+    // { open: false, pos: { x: 32, y: 96 }},
+    // { open: false, pos: { x: 96, y: 96 }},
+    // { open: false, pos: { x: 160, y: 128 }},
+    // { open: false, pos: { x: 224, y: 128 }},
+    // { open: false, pos: { x: 32, y: 160 }},
+    // { open: false, pos: { x: 64, y: 160 }},
+    // { open: false, pos: { x: 128, y: 160 }},
+    // { open: false, pos: { x: 160, y: 192 }},
+    // { open: false, pos: { x: 32, y: 224 }},
+    // { open: false, pos: { x: 96, y: 224 }},
+    // { open: false, pos: { x: 224, y: 224 }},
+    // { open: false, pos: { x: 160, y: 256 }},
+    // { open: false, pos: { x: 64, y: 288 }},
+    // { open: false, pos: { x: 96, y: 288 }},
+    // { open: false, pos: { x: 160, y: 288 }},
+    // { open: false, pos: { x: 224, y: 288 }},
+    // { open: false, pos: { x: 32, y: 320 }},
+    // { open: false, pos: { x: 224, y: 320 }},
+    // { open: false, pos: { x: 32, y: 352 }},
+    // { open: false, pos: { x: 96, y: 352 }},
+    // { open: false, pos: { x: 160, y: 352 }},
+    // { open: false, pos: { x: 160, y: 384 }},
+    // { open: false, pos: { x: 64, y: 416 }},
+    // { open: false, pos: { x: 192, y: 416 }}
   ];
   this.bombNo = 0;
   this.bombs = [];
@@ -125,13 +125,13 @@ Game.prototype.destroyBlock = (loc, player, context) => {
     })
     //console.log(newBoxesArray)
     context.boxes = newBoxesArray;
-    console.log(context)
+    // console.log(context)
     context.destroyPlayer(loc, context)
   }
 
 Game.prototype.destroyPlayer = (loc, context) => {
     // Takes target tile, currently checks if player is standing in destruction tile.
-          console.log('before ',context.playerOne.alive, context.playerTwo.alive, context.winner)
+    console.log('before ',context.playerOne.alive, context.playerTwo.alive, context.winner)
     var playerOneRect = {x: context.playerOne.x, y: context.playerOne.y, width: 17, height: 29}
     var playerTwoRect = {x: context.playerTwo.x, y: context.playerTwo.y, width: 17, height: 29}
     var destructRect = {x: loc.x, y:loc.y, width: 32, height: 32}
@@ -143,6 +143,7 @@ Game.prototype.destroyPlayer = (loc, context) => {
       console.log('playerOne hit')
       context.playerOne.alive = false;
     }
+
     if(playerTwoRect.x < destructRect.x + destructRect.width &&
       playerTwoRect.x + playerTwoRect.width > destructRect.x &&
       playerTwoRect.y < destructRect.y + destructRect.height &&
@@ -150,13 +151,24 @@ Game.prototype.destroyPlayer = (loc, context) => {
       console.log('Player two hit')
       context.playerTwo.alive = false
     }
+
     if(!context.playerOne.alive && !context.playerTwo.alive){
       context.winner = 'draw'
     } else if (context.playerOne.alive && !context.playerTwo.alive){
-      context.winner = 'playerOne'
+      context.winner = 'player One'
     } else if (!context.playerOne.alive && context.playerTwo.alive){
-      context.winner = 'playerTwo'
+      context.winner = 'player Two'
     }
+
+    if(context.winner){
+      // 1 REMOVE PLAYER
+      console.log("WINNER! ",context.winner)
+      // 2 SET TIMEOUT TO A FEW SECS AND reset
+      setTimeout(function(){
+        context.reset()
+      }, 3000);
+    }
+
       console.log('after ', context.playerOne.alive, context.playerTwo.alive, context.winner)
   }
 
@@ -323,34 +335,34 @@ Game.prototype.reset = function(context){
   this.playerOne = { x: 33, y: 33, dir: 'down', frame: 1, alive: true };
   this.playerTwo = { x: 225, y: 417, dir: 'up', frame: 1, alive: true };
   this.boxes = [ 
-              { open: false, pos: { x: 96, y: 32 }},
-              { open: false, pos: { x: 192, y: 32 }},
-              { open: false, pos: { x: 160, y: 64 }},
-              { open: false, pos: { x: 224, y: 64 }},
-              { open: false, pos: { x: 32, y: 96 }},
-              { open: false, pos: { x: 96, y: 96 }},
-              { open: false, pos: { x: 160, y: 128 }},
-              { open: false, pos: { x: 224, y: 128 }},
-              { open: false, pos: { x: 32, y: 160 }},
-              { open: false, pos: { x: 64, y: 160 }},
-              { open: false, pos: { x: 128, y: 160 }},
-              { open: false, pos: { x: 160, y: 192 }},
-              { open: false, pos: { x: 32, y: 224 }},
-              { open: false, pos: { x: 96, y: 224 }},
-              { open: false, pos: { x: 224, y: 224 }},
-              { open: false, pos: { x: 160, y: 256 }},
-              { open: false, pos: { x: 64, y: 288 }},
-              { open: false, pos: { x: 96, y: 288 }},
-              { open: false, pos: { x: 160, y: 288 }},
-              { open: false, pos: { x: 224, y: 288 }},
-              { open: false, pos: { x: 32, y: 320 }},
-              { open: false, pos: { x: 224, y: 320 }},
-              { open: false, pos: { x: 32, y: 352 }},
-              { open: false, pos: { x: 96, y: 352 }},
-              { open: false, pos: { x: 160, y: 352 }},
-              { open: false, pos: { x: 160, y: 384 }},
-              { open: false, pos: { x: 64, y: 416 }},
-              { open: false, pos: { x: 192, y: 416 }}
+              // { open: false, pos: { x: 96, y: 32 }},
+              // { open: false, pos: { x: 192, y: 32 }},
+              // { open: false, pos: { x: 160, y: 64 }},
+              // { open: false, pos: { x: 224, y: 64 }},
+              // { open: false, pos: { x: 32, y: 96 }},
+              // { open: false, pos: { x: 96, y: 96 }},
+              // { open: false, pos: { x: 160, y: 128 }},
+              // { open: false, pos: { x: 224, y: 128 }},
+              // { open: false, pos: { x: 32, y: 160 }},
+              // { open: false, pos: { x: 64, y: 160 }},
+              // { open: false, pos: { x: 128, y: 160 }},
+              // { open: false, pos: { x: 160, y: 192 }},
+              // { open: false, pos: { x: 32, y: 224 }},
+              // { open: false, pos: { x: 96, y: 224 }},
+              // { open: false, pos: { x: 224, y: 224 }},
+              // { open: false, pos: { x: 160, y: 256 }},
+              // { open: false, pos: { x: 64, y: 288 }},
+              // { open: false, pos: { x: 96, y: 288 }},
+              // { open: false, pos: { x: 160, y: 288 }},
+              // { open: false, pos: { x: 224, y: 288 }},
+              // { open: false, pos: { x: 32, y: 320 }},
+              // { open: false, pos: { x: 224, y: 320 }},
+              // { open: false, pos: { x: 32, y: 352 }},
+              // { open: false, pos: { x: 96, y: 352 }},
+              // { open: false, pos: { x: 160, y: 352 }},
+              // { open: false, pos: { x: 160, y: 384 }},
+              // { open: false, pos: { x: 64, y: 416 }},
+              // { open: false, pos: { x: 192, y: 416 }}
             ];
   this.bombNo = 0;
   this.bombs = [];

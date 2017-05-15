@@ -31,6 +31,7 @@
     "node-uuid": "^1.4.8",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
+    "react-fastclick": "^3.0.1",
     "react-key-handler": "^0.3.0",
     "react-touch": "^0.4.2",
     "screenfull": "^3.2.0",
