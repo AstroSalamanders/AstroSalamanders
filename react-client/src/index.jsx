@@ -31,6 +31,7 @@ class App extends React.Component {
       bombNo: 0,
       bombs: [],
       flames: [],
+      //alive: {playerOne: true, playerTwo: true},
       boxes: [ 
               { open: false, pos: { x: 96, y: 32 }},
               { open: false, pos: { x: 192, y: 32 }},
@@ -133,7 +134,8 @@ class App extends React.Component {
                 { x: 64, y: 384},
                 { x: 128, y: 384},
                 { x: 192, y: 384},
-              ]
+              ],
+      winner: null
     };
 
     this.move = this.move.bind(this);
@@ -163,7 +165,6 @@ class App extends React.Component {
     })
     //console.log(newBoxesArray)
     this.setState({boxes: newBoxesArray})
-    this.destroyPlayer(loc)
   }
 
   destroyPlayer(loc){
@@ -175,7 +176,8 @@ class App extends React.Component {
       playerRect.x + playerRect.width > destructRect.x &&
       playerRect.y < destructRect.y + destructRect.height &&
       playerRect.y + playerRect.height > destructRect.y){
-      alert('Player Dead!');
+      alert(this.state.player + 'dead');
+      socket.emit()
     }
   }
 
@@ -529,8 +531,8 @@ class App extends React.Component {
 
     return (
 
-
     <div>
+    {this.state.winner? this.state.winner : 'No winner yet'}
       <KeyHandler keyEventName='keydown'  
                   keyValue="ArrowUp"
                   onKeyHandle={ (e) => this.move("up") } />
@@ -570,7 +572,9 @@ class App extends React.Component {
         <p>Room: {this.state.room.toString()}</p>
       </div> */}
 
-      { console.log("P1 ",this.state.playerOne,"\n P2 ",this.state.playerTwo) }
+      { //console.log("P1 ",this.state.playerOne,"\n P2 ",this.state.playerTwo) 
+    }
+    {console.log(this.state.winner)}
 
       <Game playerOne={ this.state.playerOne } 
             playerTwo = { this.state.playerTwo }
