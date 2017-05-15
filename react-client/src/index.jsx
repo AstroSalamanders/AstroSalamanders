@@ -3,7 +3,11 @@ import ReactDOM from 'react-dom';
 import KeyHandler, {KEYDOWN, KEYUP} from 'react-key-handler';
 import $ from 'jquery';
 import Game from './components/Game.js';
-import PlayerTwo from './components/PlayerTwo.js'
+import PlayerTwo from './components/PlayerTwo.js';
+// import { Swipeable, Holdable, defineHold, holdProgress, defineSwipe } from 'react-touch';
+import Touchscreen from './components/Touchscreen.js';
+import screenfull from 'screenfull';
+
 
 class App extends React.Component {
 
@@ -136,19 +140,20 @@ class App extends React.Component {
                 { x: 192, y: 384},
               ],
       winner: null
+
     };
 
     this.move = this.move.bind(this);
     this.canMove = this.canMove.bind(this);
     this.destroyBlock = this.destroyBlock.bind(this);
     this.destroyPlayer = this.destroyPlayer.bind(this);
-
     this.joinGameOnClick = this.joinGameOnClick.bind(this);
+    this.swipeDirection = this.swipeDirection.bind(this);
     // this.test = this.test.bind(this);
   }
 
   componentDidMount(){
-    // function to randomly place x amount of boxes
+    
     this.joinGameOnClick();
     console.log("JOINED",this.state.clientID, this.state.room.toString() )
   }
@@ -523,7 +528,18 @@ class App extends React.Component {
 
   }
 
+  swipeDirection(direction) {
+      console.log("SWIPED ", direction);
 
+      this.setState({ 
+        [this.state.player]: { 
+          dir: direction, 
+          frame: this.state[this.state.player].frame,
+          x: this.state[this.state.player].x, 
+          y: this.state[this.state.player].y  
+        }
+      });
+  }
 
 
 
@@ -533,6 +549,7 @@ class App extends React.Component {
 
     <div>
     {this.state.winner? this.state.winner : 'No winner yet'}
+      
       <KeyHandler keyEventName='keydown'  
                   keyValue="ArrowUp"
                   onKeyHandle={ (e) => this.move("up") } />
@@ -553,28 +570,38 @@ class App extends React.Component {
                   keyValue=" "
                   onKeyHandle={ (e) => this.move('spacebar') } />
 
-     {/*Test Code
+      {/*Test Code
 
 
-      <button onClick={this.destroyBlock}> DestroyBlock</button>
-      <button onClick={this.destroyPlayer}> DestroyPlayer</button>
-    
-      <button onClick={this.joinGameOnClick}> Join Game Room </button>*/}
-      
-      {/*Test Code <button onClick={this.test}> test </button>
+          <button onClick={this.destroyBlock}> DestroyBlock</button>
+          <button onClick={this.destroyPlayer}> DestroyPlayer</button>
+        
+          <button onClick={this.joinGameOnClick}> Join Game Room </button>
 
-      <div id='test'>
-        {this.state.test}
-      </div>
+      */}
+          
+      {/*Test Code 
 
-      <div>
-        <p>ClientID: {this.state.clientID}</p>
-        <p>Room: {this.state.room.toString()}</p>
-      </div> */}
+          <button onClick={this.test}> test </button>
+
+          <div id='test'>
+            {this.state.test}
+          </div>
+
+          <div>
+            <p>ClientID: {this.state.clientID}</p>
+            <p>Room: {this.state.room.toString()}</p>
+          </div> 
 
       { //console.log("P1 ",this.state.playerOne,"\n P2 ",this.state.playerTwo) 
     }
     {console.log(this.state.winner)}
+          { console.log("P1 ",this.state.playerOne,"\n P2 ",this.state.playerTwo) }
+
+      */}
+        
+
+      {/* <Touchscreen move={ this.move } /> */}
 
       <Game playerOne={ this.state.playerOne } 
             playerTwo = { this.state.playerTwo }
@@ -588,6 +615,18 @@ class App extends React.Component {
 }
 
 ReactDOM.render(<App />, document.getElementById('app'));
+
+/*
+
+  onSwipeTop={ () => this.swipeDirection('up') } 
+
+  onSwipeRight={ () => this.swipeDirection('right') } 
+
+  onSwipeBottom={ () => this.swipeDirection('down') } 
+
+  onSwipeLeft={ () => this.swipeDirection('left') } 
+
+*/
 
 // Helper function
 // var customFloor = function(obj){

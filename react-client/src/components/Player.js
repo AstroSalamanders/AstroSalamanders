@@ -11,7 +11,7 @@ class Player extends React.Component{
   constructor(props){
     super(props);
 
-    console.log("playerOne props",props)
+    // console.log("playerOne props",props)
   }
 
 
@@ -19,7 +19,7 @@ class Player extends React.Component{
 
   render(){
 
-    console.log( "Rendering player: ",this.props );
+    // console.log( "Rendering player: ",this.props );
 
     return( 
 
