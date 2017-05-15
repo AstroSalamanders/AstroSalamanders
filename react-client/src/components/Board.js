@@ -37,6 +37,7 @@ class Board extends React.Component {
 
         <div id="Board">
 
+          
           <PlayerOne pos={ this.props.playerOne } />
 
           <PlayerTwo pos={ this.props.playerTwo } />

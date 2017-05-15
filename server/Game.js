@@ -1,8 +1,8 @@
 var _ = require('underscore');
 
 var Game = function(roomid){
-  this.playerOne = { x: 33, y: 33, dir: 'down', frame: 1, alive:true };
-  this.playerTwo = { x: 225, y: 417, dir: 'up', frame: 1, alive: true };
+  this.playerOne = { x: 33, y: 33, dir: 'down', frame: 1, alive:false };
+  this.playerTwo = { x: 225, y: 417, dir: 'up', frame: 1, alive: false };
   this.boxes = [ 
     // { open: false, pos: { x: 96, y: 32 }},
     // { open: false, pos: { x: 192, y: 32 }},
@@ -88,7 +88,6 @@ var Game = function(roomid){
     { x: 0, y: 352 },
     { x: 0, y: 384 },
     { x: 0, y: 416 },
-    { x: 0, y: 448 },
 
     // inside blocks
     { x: 64, y: 64},
@@ -332,6 +331,7 @@ Game.prototype.move = function(dir, player){
 }
 
 Game.prototype.reset = function(context){
+  console.log("RESETTING")
   this.playerOne = { x: 33, y: 33, dir: 'down', frame: 1, alive: true };
   this.playerTwo = { x: 225, y: 417, dir: 'up', frame: 1, alive: true };
   this.boxes = [ 
@@ -419,7 +419,6 @@ Game.prototype.reset = function(context){
                 { x: 0, y: 352 },
                 { x: 0, y: 384 },
                 { x: 0, y: 416 },
-                { x: 0, y: 448 },
 
                 // inside blocks
                 { x: 64, y: 64},

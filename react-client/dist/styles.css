@@ -3,6 +3,14 @@ body{
   background-color: green;*/
 }
 
+.alivetrue {
+  display: block;
+}
+
+.alivefalse{
+  display: none;
+}
+
 .winner{
   z-index: 1000;
     color: red;

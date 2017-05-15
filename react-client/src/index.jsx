@@ -32,8 +32,8 @@ class App extends React.Component {
          Since the blocks won't change, they could be a state of the board component itself
       */
       player: '',
-      playerOne: { x: 33, y: 33, dir: 'down', frame: 1, alive: true },
-      playerTwo: { x: 225, y: 417, dir: 'up', frame: 1, alive: true },
+      playerOne: { x: 33, y: 33, dir: 'down', frame: 1, alive: false },
+      playerTwo: { x: 225, y: 417, dir: 'up', frame: 1, alive: false },
       bombNo: 0,
       bombs: [],
       flames: [],
@@ -235,25 +235,38 @@ class App extends React.Component {
   }
 
   joinGameOnClick () {
+
     var socket = io.connect('/');
+
     socket.on('onconnected', (data) => {
       console.log('connected successfuly to the socket.io server. My server side ID is ', data.id);
       socket.emit('join');
     });
 
     socket.on('room info', ({clientID, room, adapter, playerNumber}) => {
+
       console.log("clientID: ", clientID);
       console.log("room: ", room); 
       console.log("adapter: ", adapter); 
       console.log("player number:", playerNumber);
+
       this.setState({
         socket: socket,
         clientID: clientID,
         room: room
       })
+
       if(this.state.clientID === clientID){
         var player = playerNumber === 1 ? 'playerOne' : 'playerTwo'
-        this.setState({ player: player })
+        this.setState({ player: player });
+        this.setState({ [this.state.player]: {  
+            x: [this.state.player].x, 
+            y: [this.state.player].y, 
+            dir: 'down', 
+            frame: 1, 
+            alive: true 
+          }
+      });
 
       }
     });
@@ -285,7 +298,7 @@ class App extends React.Component {
   move(dir){
 
     console.log("MOVING",dir);
-    
+
     // current way to directly send actions to server 
     this.state.socket.emit('action', {
       dir: dir,
@@ -658,6 +671,7 @@ class App extends React.Component {
       { this.state.winner ? <h1 className="winner">{ this.state.winner.toUpperCase() } { this.state.winner === 'draw' ? '!' : 'WINS!' }</h1> : null }
 
       <Controls move={ this.move }/>
+
       <Game playerOne={ this.state.playerOne } 
             playerTwo = { this.state.playerTwo }
             boxes={ this.state.boxes }
