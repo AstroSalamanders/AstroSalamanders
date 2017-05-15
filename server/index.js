@@ -102,12 +102,14 @@ sio.sockets.on('connection', (client) => {
       roomList.push(room);
       games[room] = new Game(); // Adding new game instance with room name as key
     }
+
     //when there are less than 2, but not 0 clientID in the last room
     //it is a available room to join
     else if (client.adapter.rooms[roomList.tail.val].length < 2) {
       console.log(roomList.tail.val + ' players < 2');
       room = roomList.tail.val;
     }
+
     //when there are 2 clientID in the last room
     //increment the room#, and use that to create a new room name to the list
     else {
@@ -117,20 +119,29 @@ sio.sockets.on('connection', (client) => {
       roomList.push(room);
       games[room] = new Game();
     }
+
     //store the key-value pair of client and room node
     clientID_room_table[client.userid] = roomList.tail;
     client.join(room);
+
     //if after join, current room is full, move this room node to the front of list
     //so that other waiting room will become the next tail, instead of creating a new room
     if (client.adapter.rooms[roomList.tail.val].length === 2) {
       roomList.moveToFront(roomList.tail);
     }
+
+    // set player alive
+    
+
     client.emit('room info', {
       clientID: Object.keys(client.rooms)[0],
       room: room,
       adapter: client.adapter.rooms,
       playerNumber: client.adapter.rooms[roomList.tail.val].length
     });
+
+    let player = (client.adapter.rooms[roomList.tail.val].length === 1) ? 'playerOne' : 'playerTwo';
+    games[room][ player ].alive = true;
 
     console.log(JSON.stringify(games[room]))
 

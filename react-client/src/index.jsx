@@ -1,9 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import KeyHandler, {KEYDOWN, KEYUP} from 'react-key-handler';
+import KeyHandler, { KEYDOWN, KEYUP } from 'react-key-handler';
 import $ from 'jquery';
 import Game from './components/Game.js';
-import PlayerTwo from './components/PlayerTwo.js'
+import PlayerTwo from './components/PlayerTwo.js';
+// import { Swipeable, Holdable, defineHold, holdProgress, defineSwipe } from 'react-touch';
+// import Touchscreen from './components/Touchscreen.js';
+// import screenfull from 'screenfull';
+import Controls from './components/Controls.js';
+import initFastClick from 'react-fastclick';
+initFastClick();
 
 class App extends React.Component {
 
@@ -25,13 +31,13 @@ class App extends React.Component {
 
          Since the blocks won't change, they could be a state of the board component itself
       */
-      player: 'playerTwo',
-      playerOne: { x: 33, y: 33, dir: 'down', frame: 1 },
-      playerTwo: { x: 225, y: 417, dir: 'down', frame: 1 },
+      player: '',
+      playerOne: { x: 33, y: 33, dir: 'down', frame: 1, alive: false },
+      playerTwo: { x: 225, y: 417, dir: 'up', frame: 1, alive: false },
       bombNo: 0,
       bombs: [],
       flames: [],
-      //alive: {playerOne: true, playerTwo: true},
+      // alive: {playerOne: true, playerTwo: true},
       boxes: [ 
               { open: false, pos: { x: 96, y: 32 }},
               { open: false, pos: { x: 192, y: 32 }},
@@ -136,19 +142,20 @@ class App extends React.Component {
                 { x: 192, y: 384},
               ],
       winner: null
+
     };
 
     this.move = this.move.bind(this);
     this.canMove = this.canMove.bind(this);
     this.destroyBlock = this.destroyBlock.bind(this);
     this.destroyPlayer = this.destroyPlayer.bind(this);
-
     this.joinGameOnClick = this.joinGameOnClick.bind(this);
+    this.swipeDirection = this.swipeDirection.bind(this);
     // this.test = this.test.bind(this);
   }
 
   componentDidMount(){
-    // function to randomly place x amount of boxes
+    
     this.joinGameOnClick();
     console.log("JOINED",this.state.clientID, this.state.room.toString() )
   }
@@ -169,38 +176,98 @@ class App extends React.Component {
 
   destroyPlayer(loc){
     // Takes target tile, currently checks if player is standing in destruction tile.
-    var playerRect = {x: this.state[this.state.player].x, y: this.state[this.state.player].y, width: 17, height: 29}
+    // var playerRect = {x: this.state[this.state.player].x, y: this.state[this.state.player].y, width: 17, height: 29}
+    // var destructRect = {x: loc.x, y:loc.y, width: 32, height: 32}
+
+    // if(playerRect.x < destructRect.x + destructRect.width &&
+    //   playerRect.x + playerRect.width > destructRect.x &&
+    //   playerRect.y < destructRect.y + destructRect.height &&
+    //   playerRect.y + playerRect.height > destructRect.y){
+    //   // alert(this.state.player + 'dead');
+
+
+    //   socket.emit()
+    // }
+
+    console.log('before ',this.state.playerOne.alive, this.state.playerTwo.alive, this.state.winner)
+    var playerOneRect = {x: this.state.playerOne.x, y: this.state.playerOne.y, width: 17, height: 29}
+    var playerTwoRect = {x: this.state.playerTwo.x, y: this.state.playerTwo.y, width: 17, height: 29}
     var destructRect = {x: loc.x, y:loc.y, width: 32, height: 32}
 
-    if(playerRect.x < destructRect.x + destructRect.width &&
-      playerRect.x + playerRect.width > destructRect.x &&
-      playerRect.y < destructRect.y + destructRect.height &&
-      playerRect.y + playerRect.height > destructRect.y){
-      alert(this.state.player + 'dead');
-      socket.emit()
+    if(playerOneRect.x < destructRect.x + destructRect.width &&
+      playerOneRect.x + playerOneRect.width > destructRect.x &&
+      playerOneRect.y < destructRect.y + destructRect.height &&
+      playerOneRect.y + playerOneRect.height > destructRect.y){
+      console.log('playerOne hit')
+
+      this.setState({ playerOne: { alive: false } });
     }
+
+    if(playerTwoRect.x < destructRect.x + destructRect.width &&
+      playerTwoRect.x + playerTwoRect.width > destructRect.x &&
+      playerTwoRect.y < destructRect.y + destructRect.height &&
+      playerTwoRect.y + playerTwoRect.height > destructRect.y){
+      console.log('Player two hit')
+
+      this.setState( { playerTwo: { alive: false } } );
+    }
+
+    if(!this.state.playerOne.alive && !this.state.playerTwo.alive){
+      this.setState({ winner: 'draw' });
+    } else if (this.state.playerOne.alive && !this.state.playerTwo.alive){
+      this.setState({ winner: 'player One' });
+    } else if (!this.state.playerOne.alive && this.state.playerTwo.alive){
+      this.setState({ winner: 'player Two' });
+    }
+
+    if(this.state.winner){
+      // 1 REMOVE PLAYER
+      console.log("WINNER! ",this.state.winner)
+      // 2 SET TIMEOUT TO A FEW SECS AND reset
+      // setTimeout(function(){
+      //   this.state.reset()
+      // }, 3000);
+    }
+
+      // console.log('after ', context.playerOne.alive, context.playerTwo.alive, context.winner)
+
+
   }
 
   joinGameOnClick () {
+
     var socket = io.connect('/');
+
     socket.on('onconnected', (data) => {
       console.log('connected successfuly to the socket.io server. My server side ID is ', data.id);
       socket.emit('join');
     });
 
     socket.on('room info', ({clientID, room, adapter, playerNumber}) => {
+
       console.log("clientID: ", clientID);
       console.log("room: ", room); 
       console.log("adapter: ", adapter); 
       console.log("player number:", playerNumber);
+
       this.setState({
         socket: socket,
         clientID: clientID,
         room: room
       })
+
       if(this.state.clientID === clientID){
         var player = playerNumber === 1 ? 'playerOne' : 'playerTwo'
-        this.setState({player: player})
+        this.setState({ player: player });
+        this.setState({ [this.state.player]: {  
+            x: this.state[this.state.player].x, 
+            y: this.state[this.state.player].y, 
+            dir: 'down', 
+            frame: 1, 
+            alive: true 
+          }
+      });
+
       }
     });
 
@@ -229,6 +296,8 @@ class App extends React.Component {
   // }
 
   move(dir){
+
+    console.log("MOVING",dir);
 
     // current way to directly send actions to server 
     this.state.socket.emit('action', {
@@ -523,7 +592,18 @@ class App extends React.Component {
 
   }
 
+  swipeDirection(direction) {
+      console.log("SWIPED ", direction);
 
+      this.setState({ 
+        [this.state.player]: { 
+          dir: direction, 
+          frame: this.state[this.state.player].frame,
+          x: this.state[this.state.player].x, 
+          y: this.state[this.state.player].y  
+        }
+      });
+  }
 
 
 
@@ -532,7 +612,9 @@ class App extends React.Component {
     return (
 
     <div>
-    {this.state.winner? this.state.winner : 'No winner yet'}
+
+    {/* this.state.winner ? this.state.winner : 'No winner yet' */}
+      
       <KeyHandler keyEventName='keydown'  
                   keyValue="ArrowUp"
                   onKeyHandle={ (e) => this.move("up") } />
@@ -553,28 +635,42 @@ class App extends React.Component {
                   keyValue=" "
                   onKeyHandle={ (e) => this.move('spacebar') } />
 
-     {/*Test Code
+      {/*Test Code
 
 
-      <button onClick={this.destroyBlock}> DestroyBlock</button>
-      <button onClick={this.destroyPlayer}> DestroyPlayer</button>
-    
-      <button onClick={this.joinGameOnClick}> Join Game Room </button>*/}
-      
-      {/*Test Code <button onClick={this.test}> test </button>
+          <button onClick={this.destroyBlock}> DestroyBlock</button>
+          <button onClick={this.destroyPlayer}> DestroyPlayer</button>
+        
+          <button onClick={this.joinGameOnClick}> Join Game Room </button>
 
-      <div id='test'>
-        {this.state.test}
-      </div>
+      */}
+          
+      {/*Test Code 
 
-      <div>
-        <p>ClientID: {this.state.clientID}</p>
-        <p>Room: {this.state.room.toString()}</p>
-      </div> */}
+          <button onClick={this.test}> test </button>
+
+          <div id='test'>
+            {this.state.test}
+          </div>
+
+          <div>
+            <p>ClientID: {this.state.clientID}</p>
+            <p>Room: {this.state.room.toString()}</p>
+          </div> 
 
       { //console.log("P1 ",this.state.playerOne,"\n P2 ",this.state.playerTwo) 
     }
     {console.log(this.state.winner)}
+          { console.log("P1 ",this.state.playerOne,"\n P2 ",this.state.playerTwo) }
+
+      */}
+        
+
+      {/* <Touchscreen move={ this.move } /> */}
+
+      { this.state.winner ? <h1 className="winner">{ this.state.winner.toUpperCase() } { this.state.winner === 'draw' ? '!' : 'WINS!' }</h1> : null }
+
+      <Controls move={ this.move }/>
 
       <Game playerOne={ this.state.playerOne } 
             playerTwo = { this.state.playerTwo }
@@ -588,6 +684,18 @@ class App extends React.Component {
 }
 
 ReactDOM.render(<App />, document.getElementById('app'));
+
+/*
+
+  onSwipeTop={ () => this.swipeDirection('up') } 
+
+  onSwipeRight={ () => this.swipeDirection('right') } 
+
+  onSwipeBottom={ () => this.swipeDirection('down') } 
+
+  onSwipeLeft={ () => this.swipeDirection('left') } 
+
+*/
 
 // Helper function
 // var customFloor = function(obj){
