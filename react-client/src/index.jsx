@@ -33,8 +33,8 @@ class App extends React.Component {
          Since the blocks won't change, they could be a state of the board component itself
       */
       player: '',
-      playerOne: { x: 33, y: 33, dir: 'down', frame: 1, alive: false },
-      playerTwo: { x: 225, y: 417, dir: 'up', frame: 1, alive: false },
+      playerOne: { x: 33, y: 33, dir: 'down', frame: 1, alive: false, id: null },
+      playerTwo: { x: 225, y: 417, dir: 'up', frame: 1, alive: false, id: null },
       bombNo: 0,
       bombs: [],
       flames: [],
@@ -306,7 +306,7 @@ class App extends React.Component {
       dir: dir,
       room: this.state.room,
       player: this.state.player
-    })
+    });
 
     /*  
     frame switching logic:
@@ -320,173 +320,173 @@ class App extends React.Component {
             frame += 1
     */
 
-      if ( dir === 'up' ){
+      // if ( dir === 'up' ){
 
-          // normal move
-          this.setState({ 
-            [this.state.player]: { 
-              frame: (( dir !== this.state[this.state.player].dir ) ? 1 : 
-                       (this.state[this.state.player].frame === 3) ? 
-                       this.state[this.state.player].frame - 1 : 
-                       this.state[this.state.player].frame + 1),
-              dir: (dir === 'spacebar') ? this.state[this.state.player].dir : dir,
-              x: this.state[this.state.player].x, 
-              y: this.state[this.state.player].y - this.canMove(dir)
-            }
-          });
+      //     // normal move
+      //     this.setState({ 
+      //       [this.state.player]: { 
+      //         frame: (( dir !== this.state[this.state.player].dir ) ? 1 : 
+      //                  (this.state[this.state.player].frame === 3) ? 
+      //                  this.state[this.state.player].frame - 1 : 
+      //                  this.state[this.state.player].frame + 1),
+      //         dir: (dir === 'spacebar') ? this.state[this.state.player].dir : dir,
+      //         x: this.state[this.state.player].x, 
+      //         y: this.state[this.state.player].y - this.canMove(dir)
+      //       }
+      //     });
 
-          console.log("DIR %s : %s",dir,this.state[this.state.player].dir)
-      }
-
-
-      else if ( dir === 'down' ){
-
-          this.setState({ [this.state.player]: { 
-            frame: (( dir !== this.state[this.state.player].dir ) ? 1 : 
-                       (this.state[this.state.player].frame === 3) ? 
-                       this.state[this.state.player].frame - 1 : 
-                       this.state[this.state.player].frame + 1),
-            dir: (dir === 'spacebar') ? this.state[this.state.player].dir : dir,
-            x: this.state[this.state.player].x, 
-            y: this.state[this.state.player].y + this.canMove(dir)
-          } });
-
-          console.log("DIR %s : %s",dir,this.state[this.state.player].dir)
-      }
+      //     console.log("DIR %s : %s",dir,this.state[this.state.player].dir)
+      // }
 
 
-      else if ( dir === 'right' ){
+      // else if ( dir === 'down' ){
 
-          this.setState({ [this.state.player]: { 
-            frame: (( dir !== this.state[this.state.player].dir ) ? 1 : 
-                       (this.state[this.state.player].frame === 3) ? 
-                       this.state[this.state.player].frame - 1 : 
-                       this.state[this.state.player].frame + 1),
-            dir: (dir === 'spacebar') ? this.state[this.state.player].dir : dir,
-            x: this.state[this.state.player].x + this.canMove(dir), 
-            y: this.state[this.state.player].y }
-          });
+      //     this.setState({ [this.state.player]: { 
+      //       frame: (( dir !== this.state[this.state.player].dir ) ? 1 : 
+      //                  (this.state[this.state.player].frame === 3) ? 
+      //                  this.state[this.state.player].frame - 1 : 
+      //                  this.state[this.state.player].frame + 1),
+      //       dir: (dir === 'spacebar') ? this.state[this.state.player].dir : dir,
+      //       x: this.state[this.state.player].x, 
+      //       y: this.state[this.state.player].y + this.canMove(dir)
+      //     } });
 
-          console.log("DIR %s : %s",dir,this.state[this.state.player].dir)
-      }
+      //     console.log("DIR %s : %s",dir,this.state[this.state.player].dir)
+      // }
 
 
-      else if ( dir === 'left' ){
+      // else if ( dir === 'right' ){
 
-          this.setState({ [this.state.player]: { 
-            frame: (( dir !== this.state[this.state.player].dir ) ? 1 : 
-                       (this.state[this.state.player].frame === 3) ? 
-                       this.state[this.state.player].frame - 1 : 
-                       this.state[this.state.player].frame + 1),
-            dir: (dir === 'spacebar') ? this.state[this.state.player].dir : dir,
-            x: this.state[this.state.player].x - this.canMove(dir), 
-            y: this.state[this.state.player].y }
-          });
+      //     this.setState({ [this.state.player]: { 
+      //       frame: (( dir !== this.state[this.state.player].dir ) ? 1 : 
+      //                  (this.state[this.state.player].frame === 3) ? 
+      //                  this.state[this.state.player].frame - 1 : 
+      //                  this.state[this.state.player].frame + 1),
+      //       dir: (dir === 'spacebar') ? this.state[this.state.player].dir : dir,
+      //       x: this.state[this.state.player].x + this.canMove(dir), 
+      //       y: this.state[this.state.player].y }
+      //     });
 
-          console.log("DIR %s : %s",dir,this.state[this.state.player].dir)
-      }
+      //     console.log("DIR %s : %s",dir,this.state[this.state.player].dir)
+      // }
 
-      else if ( dir === 'spacebar' ){
 
-        // function to center bombs
-        let customFloor = (coord) => {
-          return Math.round(coord/32) * 32
-        }
+      // else if ( dir === 'left' ){
 
-        // increase bombNo
-        this.setState({ bombNo: (this.state.bombNo + 1) });
+      //     this.setState({ [this.state.player]: { 
+      //       frame: (( dir !== this.state[this.state.player].dir ) ? 1 : 
+      //                  (this.state[this.state.player].frame === 3) ? 
+      //                  this.state[this.state.player].frame - 1 : 
+      //                  this.state[this.state.player].frame + 1),
+      //       dir: (dir === 'spacebar') ? this.state[this.state.player].dir : dir,
+      //       x: this.state[this.state.player].x - this.canMove(dir), 
+      //       y: this.state[this.state.player].y }
+      //     });
+
+      //     console.log("DIR %s : %s",dir,this.state[this.state.player].dir)
+      // }
+
+      // else if ( dir === 'spacebar' ){
+
+      //   // function to center bombs
+      //   let customFloor = (coord) => {
+      //     return Math.round(coord/32) * 32
+      //   }
+
+      //   // increase bombNo
+      //   this.setState({ bombNo: (this.state.bombNo + 1) });
        
-        //create new bombs/update bomb state
-        let newBomb = { 
-                        x: customFloor(this.state[this.state.player].x), 
-                        y: customFloor(this.state[this.state.player].y),
-                        frame: 1,
-                        id: this.state.bombNo
-                      };
+      //   //create new bombs/update bomb state
+      //   let newBomb = { 
+      //                   x: customFloor(this.state[this.state.player].x), 
+      //                   y: customFloor(this.state[this.state.player].y),
+      //                   frame: 1,
+      //                   id: this.state.bombNo
+      //                 };
 
-        let currentBombs = this.state.bombs;
+      //   let currentBombs = this.state.bombs;
         
-        currentBombs.push(newBomb);
+      //   currentBombs.push(newBomb);
 
-        this.setState({ bombs: currentBombs });
+      //   this.setState({ bombs: currentBombs });
 
-        // for this this inside timeouts
-        var context = this;
+      //   // for this this inside timeouts
+      //   var context = this;
 
-        // animate bomb cookup
-        var bombAnimation = function(id){
-          return setInterval(function(){
-            // change state on newbomb,
-            // update state with currentBombs?
+      //   // animate bomb cookup
+      //   var bombAnimation = function(id){
+      //     return setInterval(function(){
+      //       // change state on newbomb,
+      //       // update state with currentBombs?
 
-            // newBomb.frame = (newBomb.frame === 3) ? (3) : (newBomb.frame + 1);
+      //       // newBomb.frame = (newBomb.frame === 3) ? (3) : (newBomb.frame + 1);
 
-            // update bomb frame getting bomb with id stored in closure
-            let bombs = context.state.bombs.slice();
-            let bomb = bombs.find((b) => b.id === id );
-            bomb.frame = (bomb.frame === 3) ? (3) : (bomb.frame + 1);
-            context.setState({ bombs: bombs });
+      //       // update bomb frame getting bomb with id stored in closure
+      //       let bombs = context.state.bombs.slice();
+      //       let bomb = bombs.find((b) => b.id === id );
+      //       bomb.frame = (bomb.frame === 3) ? (3) : (bomb.frame + 1);
+      //       context.setState({ bombs: bombs });
 
-          }, 800);
-        }
+      //     }, 800);
+      //   }
 
-        // explode bomb and remove
-        var explosion = function(id){
-          //when bomb explodes ( 3 secs ), set flames state
-          setTimeout( ()=> {
+      //   // explode bomb and remove
+      //   var explosion = function(id){
+      //     //when bomb explodes ( 3 secs ), set flames state
+      //     setTimeout( ()=> {
 
-            // remove animation before blowup
-            clearInterval(bombAnim);
+      //       // remove animation before blowup
+      //       clearInterval(bombAnim);
 
-            console.log('BOOM!!!');
+      //       console.log('BOOM!!!');
 
-            // 1 make a copy of the current bombs
-            let bombs = context.state.bombs.slice();
+      //       // 1 make a copy of the current bombs
+      //       let bombs = context.state.bombs.slice();
 
-            // 2 find our bomb
-            let bomb = bombs.find((b) => b.id === id );
+      //       // 2 find our bomb
+      //       let bomb = bombs.find((b) => b.id === id );
 
-            // -- do flames
-            let flameTop = {x: bomb.x, y: bomb.y + 32}; 
-            let flameLeft = {x: bomb.x - 32, y: bomb.y};
-            let flameMid = {x: bomb.x, y: bomb.y};
-            let flameRight = {x: bomb.x + 32, y: bomb.y};
-            let flameBottom = {x: bomb.x, y: bomb.y - 32};
+      //       // -- do flames
+      //       let flameTop = {x: bomb.x, y: bomb.y + 32}; 
+      //       let flameLeft = {x: bomb.x - 32, y: bomb.y};
+      //       let flameMid = {x: bomb.x, y: bomb.y};
+      //       let flameRight = {x: bomb.x + 32, y: bomb.y};
+      //       let flameBottom = {x: bomb.x, y: bomb.y - 32};
 
-            // -- set flames
-            context.setState({ flames: [flameTop, flameLeft, flameMid, flameRight, flameBottom] })
+      //       // -- set flames
+      //       context.setState({ flames: [flameTop, flameLeft, flameMid, flameRight, flameBottom] })
 
-            // 3 remove it
-            bombs.splice( bombs.indexOf(bomb), 1);
+      //       // 3 remove it
+      //       bombs.splice( bombs.indexOf(bomb), 1);
 
-            // 4 update state
-            context.setState({ bombs: bombs });
+      //       // 4 update state
+      //       context.setState({ bombs: bombs });
 
 
-            context.state.flames.forEach((flame) => {
-              context.destroyBlock(flame);
-            })
+      //       context.state.flames.forEach((flame) => {
+      //         context.destroyBlock(flame);
+      //       })
             
-            console.log('Flames state', context.state.flames);
+      //       console.log('Flames state', context.state.flames);
 
-            // disappear flames in 1 sec
-            setTimeout( () => {
-              context.setState({ flames: [] });
-            }, 1000)
+      //       // disappear flames in 1 sec
+      //       setTimeout( () => {
+      //         context.setState({ flames: [] });
+      //       }, 1000)
 
 
-          }, 3000)
-        }
+      //     }, 3000)
+      //   }
 
-        // initiates bomb animation interval 
-        // and creates a handle to it so we can remove it
-        var bombAnim = bombAnimation(this.state.bombNo);
+      //   // initiates bomb animation interval 
+      //   // and creates a handle to it so we can remove it
+      //   var bombAnim = bombAnimation(this.state.bombNo);
 
-        // this setTimeout function removes the interval
-        // and blows it up
-        explosion(this.state.bombNo);
+      //   // this setTimeout function removes the interval
+      //   // and blows it up
+      //   explosion(this.state.bombNo);
 
-      }
+      // }
 
   }
 
@@ -496,7 +496,7 @@ class App extends React.Component {
     let player = $.extend({}, this.state[this.state.player]);
     let playerWidth = 20;
     let playerHeight = 28; 
-    let boxsize = 30;
+    let boxsize = 32;
 
     // first get what would be updated player coord
     if ( dir === 'up' ){ player.y -= step; }

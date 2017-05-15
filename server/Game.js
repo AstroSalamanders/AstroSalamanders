@@ -1,8 +1,8 @@
 var _ = require('underscore');
 
 var Game = function(roomid){
-  this.playerOne = { x: 33, y: 33, dir: 'down', frame: 1, alive:false };
-  this.playerTwo = { x: 225, y: 417, dir: 'up', frame: 1, alive: false };
+  this.playerOne = { x: 33, y: 33, dir: 'down', frame: 1, alive:false, id: null };
+  this.playerTwo = { x: 225, y: 417, dir: 'up', frame: 1, alive: false, id: null };
   this.boxes = [ 
     { open: false, pos: { x: 96, y: 32 }},
     { open: false, pos: { x: 192, y: 32 }},
@@ -33,6 +33,7 @@ var Game = function(roomid){
     { open: false, pos: { x: 64, y: 416 }},
     { open: false, pos: { x: 192, y: 416 }}
   ];
+  this.page = 'game',
   this.bombNo = 0;
   this.bombs = [];
   this.flames = [];
@@ -131,9 +132,9 @@ Game.prototype.destroyBlock = (loc, player, context) => {
 Game.prototype.destroyPlayer = (loc, context) => {
     // Takes target tile, currently checks if player is standing in destruction tile.
     console.log('before ',context.playerOne.alive, context.playerTwo.alive, context.winner)
-    var playerOneRect = {x: context.playerOne.x, y: context.playerOne.y, width: 17, height: 29}
-    var playerTwoRect = {x: context.playerTwo.x, y: context.playerTwo.y, width: 17, height: 29}
-    var destructRect = {x: loc.x, y:loc.y, width: 32, height: 32}
+    var playerOneRect = {x: context.playerOne.x, y: context.playerOne.y, width: 17, height: 25}
+    var playerTwoRect = {x: context.playerTwo.x, y: context.playerTwo.y, width: 17, height: 25}
+    var destructRect = {x: loc.x, y:loc.y, width: 32, height: 30}
 
     if(playerOneRect.x < destructRect.x + destructRect.width &&
       playerOneRect.x + playerOneRect.width > destructRect.x &&
@@ -159,12 +160,15 @@ Game.prototype.destroyPlayer = (loc, context) => {
       context.winner = 'player Two'
     }
 
-    if(context.winner){
+    if (context.winner){
       // 1 REMOVE PLAYER
       console.log("WINNER! ",context.winner)
       // 2 SET TIMEOUT TO A FEW SECS AND reset
       setTimeout(function(){
-        context.reset()
+
+        context.page = 'landing';
+        context.reset();
+
       }, 3000);
     }
 
@@ -330,10 +334,22 @@ Game.prototype.move = function(dir, player){
 
 }
 
-Game.prototype.reset = function(context){
-  console.log("RESETTING")
-  this.playerOne = { x: 33, y: 33, dir: 'down', frame: 1, alive: true };
-  this.playerTwo = { x: 225, y: 417, dir: 'up', frame: 1, alive: true };
+Game.prototype.reset = function(p1, p2){
+  // console.log("RESETTING \np1:",p1,"\np2:",p2)
+  this.playerOne = { x: 33, y: 33, 
+                     dir: 'down', 
+                     frame: 1, 
+                     alive: false, 
+                     id: null
+                   };
+
+  this.playerTwo = { x: 225, y: 417, 
+                     dir: 'up', 
+                     frame: 1, 
+                     alive: false, 
+                     id: null
+                   };
+
   this.boxes = [ 
               { open: false, pos: { x: 96, y: 32 }},
               { open: false, pos: { x: 192, y: 32 }},
