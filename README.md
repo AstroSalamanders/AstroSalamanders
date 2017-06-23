@@ -1,6 +1,6 @@
 # Project Name
 
-> Pithy project description
+> Implementation of Bomberman game in the browser
 
 ## Team
 
