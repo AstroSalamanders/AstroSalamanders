@@ -1,4 +1,4 @@
-# Project Name
+# BomberGames
 
 > Implementation of Bomberman game in the browser
 
